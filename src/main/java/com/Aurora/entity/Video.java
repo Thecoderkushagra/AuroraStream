@@ -1,9 +1,7 @@
 package com.Aurora.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
-import org.apache.logging.log4j.message.StringFormattedMessage;
 
 @Entity
 @Getter
@@ -13,8 +11,12 @@ import org.apache.logging.log4j.message.StringFormattedMessage;
 @Builder
 public class Video {
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     private String videoId;
+
     private String title;
+    @Column(length = 500)
     private String description;
+    private String contentType;
     private String filePath;
 }
