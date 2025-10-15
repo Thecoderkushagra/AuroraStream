@@ -55,4 +55,10 @@ public class VideoServiceImpl implements VideoService {
         }
     }
 
+    @Override
+    public Video get(String videoId) {
+        return videoRepository
+                .findById(videoId)
+                .orElseThrow(() -> new RuntimeException("VIDEO DOSE NOT EXIST"));
+    }
 }

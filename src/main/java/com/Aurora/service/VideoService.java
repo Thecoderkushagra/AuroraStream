@@ -8,4 +8,5 @@ import org.springframework.web.multipart.MultipartFile;
 public interface VideoService {
     Video saveVideo(Video videoMetadata, MultipartFile video);
 
+    Video get(String videoId);
 }
