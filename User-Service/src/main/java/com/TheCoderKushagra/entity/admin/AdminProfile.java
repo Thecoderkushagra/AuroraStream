@@ -1,0 +1,18 @@
+package com.TheCoderKushagra.entity.admin;
+
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import org.springframework.data.mongodb.core.mapping.DBRef;
+
+import java.util.List;
+
+@Getter @Setter
+@NoArgsConstructor
+@AllArgsConstructor
+public class AdminProfile {
+    private ActionLevel actionLevel;
+    @DBRef
+    private List<ActionLogs> actionsLog;
+}
