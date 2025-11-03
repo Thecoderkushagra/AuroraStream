@@ -12,9 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ViewerProfile {
-    private String fullName;
     private String avatarUrl;
-    private String preferredLanguage;
     @DBRef
     private List<ViewerList> viewerList;
     @DBRef

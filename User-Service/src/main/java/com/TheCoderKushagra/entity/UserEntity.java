@@ -18,12 +18,13 @@ public class UserEntity {
     @Id
     private String id;
 
+    private String userName;
     private String email;
     private String password;
 
     public Roles role;
 
-    private ViewerProfile profile;
+    private ViewerProfile viewerProfile;
     private PublisherProfile publisherProfile;
     private AdminProfile adminProfile;
 
