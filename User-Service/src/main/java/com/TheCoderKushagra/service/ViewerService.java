@@ -15,12 +15,18 @@ public class ViewerService {
     @Autowired
     private UserRepository userRepository;
 
-    public ViewerResponse saveViewer(UserRequest request) {
+    public ViewerResponse saveUser(UserRequest request, int role) {
+        Roles myRole = switch (role) {
+            case 1 -> Roles.VIEWER;
+            case 2 -> Roles.PUBLISHER;
+            case 3 -> Roles.ADMIN;
+            default -> throw new IllegalStateException("Unexpected value: " + role);
+        };
         UserEntity entity = UserEntity.builder()
                 .userName(request.getUserName())
                 .email(request.getEmail())
                 .password(request.getPassword())
-                .role(Roles.VIEWER)
+                .role(myRole)
                 .build();
         UserEntity saved = userRepository.save(entity);
         return ViewerResponse.builder()
@@ -31,6 +37,7 @@ public class ViewerService {
                 .build();
     }
 
+    // =================================================================================================================
     public ViewerResponse changeUsername(String id, String newName) {
         UserEntity entity = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("invalid id:" + id + "user dose not exist"));
@@ -45,7 +52,6 @@ public class ViewerService {
     }
 
     public UserEntity changePassword() {
-        // add BCript before this
         return null;
     }
 
@@ -60,4 +66,7 @@ public class ViewerService {
             return "USER DOSE NOT EXIST";
         }
     }
+
+
+
 }

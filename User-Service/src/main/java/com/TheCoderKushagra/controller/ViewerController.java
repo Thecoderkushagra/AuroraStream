@@ -16,7 +16,8 @@ public class ViewerController {
 
     @PostMapping("/make-viewer")
     public ResponseEntity<ViewerResponse> callSaveViewer(@RequestBody UserRequest request) {
-        ViewerResponse response = viewerService.saveViewer(request);
+        int viewer = 1;
+        ViewerResponse response = viewerService.saveUser(request, 1);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
