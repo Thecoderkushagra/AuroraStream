@@ -4,10 +4,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/publisher")
-public class PublisherController {
+@RequestMapping("/master")
+public class MasterController {
 
-    // update publisher
+    // create admins
 
-    // delete publisher
+    // getALl admins
+
+    // update password
+
+    // delete admin
+
 }

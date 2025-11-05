@@ -14,13 +14,6 @@ public class ViewerController {
     @Autowired
     private ViewerService viewerService;
 
-    @PostMapping("/make-viewer")
-    public ResponseEntity<ViewerResponse> callSaveViewer(@RequestBody UserRequest request) {
-        int viewer = 1;
-        ViewerResponse response = viewerService.saveUser(request, 1);
-        return new ResponseEntity<>(response, HttpStatus.OK);
-    }
-
     @PutMapping("/update-viewer-username")
     public ResponseEntity<ViewerResponse> callUpdateUsername(
             @RequestParam("id") String id,
@@ -30,6 +23,7 @@ public class ViewerController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // NOT COMPLETED =======================================>
     @PutMapping("/update-viewer-password")
     public ResponseEntity<?> callChangePassword() {
         return new ResponseEntity<>(HttpStatus.OK);
