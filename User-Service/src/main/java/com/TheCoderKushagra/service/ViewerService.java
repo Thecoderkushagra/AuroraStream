@@ -42,6 +42,11 @@ public class ViewerService {
                 .build();
     }
 
+    public UserEntity findUserByName(String username){
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found!!"));
+    }
+
     // =================================================================================================================
     public ViewerResponse changeUsername(String id, String newName) {
         UserEntity entity = userRepository.findById(id)

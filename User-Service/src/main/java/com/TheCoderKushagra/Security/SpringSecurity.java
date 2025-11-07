@@ -1,9 +1,12 @@
 package com.TheCoderKushagra.Security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.configurers.userdetails.DaoAuthenticationConfigurer;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -14,7 +17,10 @@ import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SpringSecurity {
+    private final UserAuth userAuth;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
         return http.csrf(AbstractHttpConfigurer::disable)
@@ -30,13 +36,17 @@ public class SpringSecurity {
         return new BCryptPasswordEncoder();
     }
 
-    //DB look-up while generating jwt token
-
-
+    //DB lookUp to varify user before generating JWT-Token
     @Bean
     public AuthenticationProvider authenticationProvider() {
-        return null;
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider(userAuth);
+        provider.setPasswordEncoder(passwordEncoder());
+        return provider;
     }
-
+    
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+        return config.getAuthenticationManager();
+    }
 
 }
