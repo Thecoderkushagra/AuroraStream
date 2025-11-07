@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/Logs-api")
-public class PublicController {
+@RequestMapping("/auth")
+public class AuthController {
     @Autowired
     private ViewerService viewerService;
 
@@ -26,6 +26,7 @@ public class PublicController {
     }
 
     //otp
+
 
     //login
 }

@@ -7,6 +7,8 @@ import com.TheCoderKushagra.entity.UserEntity;
 import com.TheCoderKushagra.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -14,6 +16,8 @@ import org.springframework.stereotype.Service;
 public class ViewerService {
     @Autowired
     private UserRepository userRepository;
+
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
     public ViewerResponse saveUser(UserRequest request, int role) {
         Roles myRole = switch (role) {
@@ -25,7 +29,8 @@ public class ViewerService {
         UserEntity entity = UserEntity.builder()
                 .userName(request.getUserName())
                 .email(request.getEmail())
-                .password(request.getPassword())
+                .password(passwordEncoder.encode(
+                        request.getPassword()))
                 .role(myRole)
                 .build();
         UserEntity saved = userRepository.save(entity);
