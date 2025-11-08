@@ -43,7 +43,7 @@ public class ViewerService {
     }
 
     public UserEntity findUserByName(String username){
-        return userRepository.findByUsername(username)
+        return userRepository.findByUserName(username)
                 .orElseThrow(() -> new RuntimeException("User not found!!"));
     }
 
