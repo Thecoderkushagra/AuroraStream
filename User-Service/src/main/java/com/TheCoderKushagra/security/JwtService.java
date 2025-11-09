@@ -1,4 +1,4 @@
-package com.TheCoderKushagra.Security;
+package com.TheCoderKushagra.security;
 
 import com.TheCoderKushagra.entity.UserEntity;
 import io.jsonwebtoken.Jwts;

@@ -1,6 +1,6 @@
 package com.TheCoderKushagra.controller;
 
-import com.TheCoderKushagra.Security.JwtService;
+import com.TheCoderKushagra.security.JwtService;
 import com.TheCoderKushagra.dto.UserRequest;
 import com.TheCoderKushagra.dto.ViewerResponse;
 import com.TheCoderKushagra.entity.UserEntity;
@@ -27,16 +27,14 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    //signup-viewer
-    @PostMapping("/make-viewer")
+    @PostMapping("/signup")
     public ResponseEntity<ViewerResponse> callSaveViewer(@RequestBody UserRequest request) {
         int viewer = 1;
-        ViewerResponse response = viewerService.saveUser(request, 1);
+        ViewerResponse response = viewerService.saveUser(request, viewer);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     //otp-controller =====> right here
-
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
@@ -44,26 +42,20 @@ public class AuthController {
             @RequestParam("password") String password
     ){
         try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(username, password)
-            );
-
+            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             UserEntity user = viewerService.findUserByName(username);
 
             String accessToken = jwtService.generateToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
 
             return new ResponseEntity<>(
-                    Map.of(
-                            "accessToken",accessToken,
-                            "refreshToken",refreshToken
-                    )
+                    Map.of( "accessToken",accessToken,
+                            "refreshToken",refreshToken )
                     ,HttpStatus.OK);
 
         } catch (BadCredentialsException e) {
             log.error("LOGIN ERROR :: BY {}",username);
-            return new ResponseEntity<>(Map.of("error", "Invalid credentials"),
-                    HttpStatus.UNAUTHORIZED);
+            return new ResponseEntity<>("Invalid credentials", HttpStatus.UNAUTHORIZED);
         }
     }
 }

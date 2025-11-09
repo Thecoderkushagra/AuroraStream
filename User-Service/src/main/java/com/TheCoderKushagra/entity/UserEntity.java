@@ -5,6 +5,7 @@ import com.TheCoderKushagra.entity.publisher.PublisherProfile;
 import com.TheCoderKushagra.entity.viewer.ViewerProfile;
 import lombok.*;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -18,7 +19,9 @@ public class UserEntity {
     @Id
     private String id;
 
+    @Indexed(unique = true)
     private String userName;
+    @Indexed(unique = true)
     private String email;
     private String password;
 
