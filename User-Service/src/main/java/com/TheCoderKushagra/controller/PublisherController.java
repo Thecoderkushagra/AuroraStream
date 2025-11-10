@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/publisher")
 public class PublisherController {
 
-    // update publisher
+    // update publisher { profile-pic, userName, Passwd }
 
     // delete publisher
 }

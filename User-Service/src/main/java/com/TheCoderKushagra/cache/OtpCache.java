@@ -1,5 +1,6 @@
 package com.TheCoderKushagra.cache;
 
+import com.TheCoderKushagra.entity.UserEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -21,7 +22,7 @@ public class OtpCache {
         }
     }
 
-    public String getOtp(String key){
+    public String getOtp(String key, Class<UserEntity> userEntityClass){
         try {
             Object o = redisTemplate.opsForValue().get(key);
             if (o != null){

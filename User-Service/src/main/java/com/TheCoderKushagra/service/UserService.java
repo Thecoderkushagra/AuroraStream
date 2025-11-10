@@ -11,9 +11,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Slf4j
 @Service
-public class ViewerService {
+public class UserService {
     @Autowired
     private UserRepository userRepository;
 
@@ -47,7 +49,14 @@ public class ViewerService {
                 .orElseThrow(() -> new RuntimeException("User not found!!"));
     }
 
-    // =================================================================================================================
+    public String generateSixDigitNumber() {
+        StringBuilder uuidDigitsOnly = new StringBuilder(UUID.randomUUID().toString().replaceAll("[^0-9]", ""));
+        while (uuidDigitsOnly.length() < 6) {
+            uuidDigitsOnly.append(UUID.randomUUID().toString().replaceAll("[^0-9]", ""));
+        }
+        return uuidDigitsOnly.substring(0, 6);
+    }
+
     public ViewerResponse changeUsername(String id, String newName) {
         UserEntity entity = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("invalid id:" + id + "user dose not exist"));

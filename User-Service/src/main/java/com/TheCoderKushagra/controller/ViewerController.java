@@ -1,8 +1,7 @@
 package com.TheCoderKushagra.controller;
 
-import com.TheCoderKushagra.dto.UserRequest;
 import com.TheCoderKushagra.dto.ViewerResponse;
-import com.TheCoderKushagra.service.ViewerService;
+import com.TheCoderKushagra.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,14 +11,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/viewer")
 public class ViewerController {
     @Autowired
-    private ViewerService viewerService;
+    private UserService userService;
 
     @PutMapping("/update-viewer-username")
     public ResponseEntity<ViewerResponse> callUpdateUsername(
             @RequestParam("id") String id,
             @RequestParam("newName") String name
     ) {
-        ViewerResponse response = viewerService.changeUsername(id, name);
+        ViewerResponse response = userService.changeUsername(id, name);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
@@ -31,7 +30,7 @@ public class ViewerController {
 
     @DeleteMapping("/delete-viewer/{id}")
     public ResponseEntity<String> callDeletedUser(@PathVariable String id) {
-        String response = viewerService.deleteUser(id);
+        String response = userService.deleteUser(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
