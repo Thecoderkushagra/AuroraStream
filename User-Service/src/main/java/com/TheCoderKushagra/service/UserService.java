@@ -70,8 +70,17 @@ public class UserService {
                 .build();
     }
 
-    public UserEntity changePassword() {
-        return null;
+    public ViewerResponse changePassword(String id, String password) {
+        UserEntity entity = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("invalid id:" + id + "user dose not exist"));
+        entity.setPassword(passwordEncoder.encode(password));
+        UserEntity saved = userRepository.save(entity);
+        return ViewerResponse.builder()
+                .id(saved.getId())
+                .userName(saved.getUserName())
+                .email(saved.getEmail())
+                .role(saved.getRole())
+                .build();
     }
 
     public String deleteUser(String id) {

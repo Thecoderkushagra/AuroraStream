@@ -27,20 +27,25 @@ public class AuthController {
     @Autowired
     private UserService userService;
     @Autowired
-    private AuthenticationManager authenticationManager;
-    @Autowired
     private UserCache userCache;
     @Autowired
     private OtpCache otpCache;
+    @Autowired
+    private AuthenticationManager authenticationManager;
 
     @PostMapping("/signup")
-    public ResponseEntity<ViewerResponse> signup(@RequestBody UserRequest request) {
+    public ResponseEntity<String> signup(@RequestBody UserRequest request) {
         String userName = request.getUserName();
         String otp = userService.generateSixDigitNumber();
-        userCache.setUser(userName, request, 300);
-        otpCache.setOtp(userName+"otp", otp,300);
+        boolean uc = userCache.setUser(userName, request, 300);
+        boolean oc = otpCache.setOtp(userName + "otp", otp, 300);
+        if (!uc || !oc) {
+            log.warn("Failed to cache data for user: {}. UserCached: {}, OtpCached: {}",
+                    userName, uc, oc);
+            return new ResponseEntity<>("Unable to connect to REDIS",HttpStatus.CONFLICT);
+        }
         //send mail -> mail service
-        return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>("YOUR RESPONSE STORED SUCCESSFULLY",HttpStatus.OK);
     }
 
     @PostMapping("/otp")
@@ -53,7 +58,7 @@ public class AuthController {
         if (otp.equals(redisOtp)) {
             UserRequest userData = userCache.getUser(name, UserRequest.class);
             userService.saveUser(userData, viewer);
-            return new ResponseEntity<>(HttpStatus.OK);
+            return new ResponseEntity<>("SIGNUP SUCCESSFULLY!",HttpStatus.OK);
         } else {
             return new ResponseEntity<>("WRONG OTP",HttpStatus.FORBIDDEN);
         }

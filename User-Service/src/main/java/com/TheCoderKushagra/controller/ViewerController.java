@@ -18,14 +18,18 @@ public class ViewerController {
             @RequestParam("id") String id,
             @RequestParam("newName") String name
     ) {
+
         ViewerResponse response = userService.changeUsername(id, name);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    // NOT COMPLETED =======================================>
     @PutMapping("/update-viewer-password")
-    public ResponseEntity<?> callChangePassword() {
-        return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<?> callChangePassword(
+            @RequestParam("id") String id,
+            @RequestParam("password") String password
+    ) {
+        ViewerResponse response = userService.changePassword(id, password);
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete-viewer/{id}")
