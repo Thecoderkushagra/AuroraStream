@@ -57,8 +57,8 @@ public class AuthController {
         String redisOtp = otpCache.getOtp(name + "otp", UserEntity.class);
         if (otp.equals(redisOtp)) {
             UserRequest userData = userCache.getUser(name, UserRequest.class);
-            userService.saveUser(userData, viewer);
-            return new ResponseEntity<>("SIGNUP SUCCESSFULLY!",HttpStatus.OK);
+            ViewerResponse response = userService.saveUser(userData, viewer);
+            return new ResponseEntity<>(response.getUserName()+": SIGNUP SUCCESSFULLY!",HttpStatus.OK);
         } else {
             return new ResponseEntity<>("WRONG OTP",HttpStatus.FORBIDDEN);
         }

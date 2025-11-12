@@ -1,9 +1,12 @@
 package com.TheCoderKushagra.service;
 
+import com.TheCoderKushagra.dto.AdminResponse;
+import com.TheCoderKushagra.dto.PublisherResponse;
 import com.TheCoderKushagra.dto.UserRequest;
 import com.TheCoderKushagra.dto.ViewerResponse;
 import com.TheCoderKushagra.entity.Roles;
 import com.TheCoderKushagra.entity.UserEntity;
+import com.TheCoderKushagra.repository.CustomQuery;
 import com.TheCoderKushagra.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,9 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 import java.util.UUID;
 
 @Slf4j
@@ -18,6 +24,8 @@ import java.util.UUID;
 public class UserService {
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private CustomQuery customQuery;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -47,6 +55,55 @@ public class UserService {
     public UserEntity findUserByName(String username){
         return userRepository.findByUserName(username)
                 .orElseThrow(() -> new RuntimeException("User not found!!"));
+    }
+
+    public List<?> getAllByRole(int role) {
+        List<UserEntity> allList = customQuery.getAll(role);
+        if (allList.isEmpty()) return Collections.singletonList("List is empty");
+        if (role == 1){
+            List<ViewerResponse> viewerList = new ArrayList<>();
+            for (UserEntity ent : allList) {
+                viewerList.add(ViewerResponse.builder()
+                        .id(ent.getId())
+                        .userName(ent.getUserName())
+                        .email(ent.getEmail())
+                        .role(ent.getRole())
+                        .avatarUrl(ent.getViewerProfile() != null ?
+                                ent.getViewerProfile().getAvatarUrl(): null)
+                        .build()
+                );
+            }
+            return viewerList;
+        } else if (role == 2) {
+            List<PublisherResponse> pubList = new ArrayList<>();
+            for (UserEntity ent : allList) {
+                pubList.add(PublisherResponse.builder()
+                        .id(ent.getId())
+                        .userName(ent.getUserName())
+                        .email(ent.getEmail())
+                        .role(ent.getRole())
+                        .studioName(ent.getPublisherProfile() != null ?
+                                ent.getPublisherProfile().getStudioName() : null)
+                        .websiteUrl(ent.getPublisherProfile() != null ?
+                                ent.getPublisherProfile().getWebsiteUrl() : null)
+                        .build());
+            }
+            return pubList;
+        } else if (role == 3) {
+            List<AdminResponse> adminList = new ArrayList<>();
+            for (UserEntity ent : allList) {
+                adminList.add(AdminResponse.builder()
+                        .id(ent.getId())
+                        .userName(ent.getUserName())
+                        .email(ent.getEmail())
+                        .role(ent.getRole())
+                        .actionLevel(ent.getAdminProfile() != null ?
+                                ent.getAdminProfile().getActionLevel() : null)
+                        .build());
+            }
+            return adminList;
+        }
+        return null;
     }
 
     public String generateSixDigitNumber() {
@@ -94,7 +151,5 @@ public class UserService {
             return "USER DOSE NOT EXIST";
         }
     }
-
-
 
 }
