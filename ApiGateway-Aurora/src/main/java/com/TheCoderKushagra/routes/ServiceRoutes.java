@@ -67,4 +67,54 @@ public class ServiceRoutes {
                             }
                         });
     }
+
+    @Bean
+    public RouterFunction<ServerResponse> test() {
+        return RouterFunctions
+                .route(POST("/user/admin/all-viewer").and(accept(MediaType.APPLICATION_JSON)),
+        request -> {
+            try {
+                // Read request body
+                String requestBody = request.body(String.class);
+
+                // Prepare headers
+                HttpHeaders headers = new HttpHeaders();
+                headers.setContentType(MediaType.APPLICATION_JSON);
+
+                // Copy original headers if needed
+                request.headers().asHttpHeaders().forEach((key, value) -> {
+                    if (!key.equalsIgnoreCase("host") &&
+                            !key.equalsIgnoreCase("content-length")) {
+                        headers.put(key, value);
+                    }
+                });
+
+                HttpEntity<String> entity = new HttpEntity<>(requestBody, headers);
+
+                // Make request to User-Service
+                ResponseEntity<String> response = restTemplate.exchange(
+                        "http://localhost:9000/user/admin/all-viewer",
+                        HttpMethod.POST,
+                        entity,
+                        String.class
+                );
+
+                // Return response
+                return ServerResponse
+                        .status(response.getStatusCode())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .body(response.getBody() != null ? response.getBody() : "");
+
+            } catch (IOException e) {
+                return ServerResponse
+                        .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body("Error reading request: " + e.getMessage());
+            } catch (Exception e) {
+                return ServerResponse
+                        .status(HttpStatus.SERVICE_UNAVAILABLE)
+                        .body("Error connecting to User-Service: " + e.getMessage());
+            }
+        });
+    }
+
 }

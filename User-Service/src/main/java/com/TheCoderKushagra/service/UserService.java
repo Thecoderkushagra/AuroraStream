@@ -57,6 +57,12 @@ public class UserService {
                 .orElseThrow(() -> new RuntimeException("User not found!!"));
     }
 
+    public UserEntity getById(String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found!!"));
+
+    }
+
     public List<?> getAllByRole(int role) {
         List<UserEntity> allList = customQuery.getAll(role);
         if (allList.isEmpty()) return Collections.singletonList("List is empty");

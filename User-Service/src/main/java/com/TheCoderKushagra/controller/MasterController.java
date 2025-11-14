@@ -7,11 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/master")
 public class MasterController {
 
+    // update password
+
     // create admins
 
     // getALl admins
-
-    // update password
 
     // delete admin
 

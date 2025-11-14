@@ -18,7 +18,6 @@ public class ViewerController {
             @RequestParam("id") String id,
             @RequestParam("newName") String name
     ) {
-
         ViewerResponse response = userService.changeUsername(id, name);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

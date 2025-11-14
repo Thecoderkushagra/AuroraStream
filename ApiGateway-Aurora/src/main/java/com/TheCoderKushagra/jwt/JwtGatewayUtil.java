@@ -38,8 +38,8 @@ public class JwtGatewayUtil {
         return extractAllClaims(token).get("userId", String.class);
     }
 
-    public List<?> extractRoles(String token) {
-        return extractAllClaims(token).get("roles", List.class);
+    public String extractRoles(String token) {
+        return extractAllClaims(token).get("roles", String.class);
     }
 
 
