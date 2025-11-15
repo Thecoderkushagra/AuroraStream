@@ -44,9 +44,8 @@ public class AdminController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    //=====================================================================
+    //================================ PUBLISHER ================================
 
-    // create publisher
     @PostMapping("/create-publisher")
     public ResponseEntity<?> callSaveUser(@RequestBody UserRequest request) {
         try {
@@ -58,14 +57,12 @@ public class AdminController {
         }
     }
 
-    // get all publisher
     @GetMapping("/all-publishers")
     public ResponseEntity<?> callGetAllByRole() {
         List<?> allByRole = userService.getAllByRole(2);
         return new ResponseEntity<>(allByRole, HttpStatus.OK);
     }
 
-    // delete publisher
     @DeleteMapping("/delete-this-pub/{id}")
     public ResponseEntity<String> deletePublisher(@PathVariable String id) {
         UserEntity user = userService.getById(id);
@@ -76,16 +73,14 @@ public class AdminController {
         return new ResponseEntity<>(user.getUserName()+": is not a publisher", HttpStatus.OK);
     }
 
-    //====================================================================
+    //================================ VIEWER ================================
 
-    // get all viewer
     @GetMapping("/all-viewer")
     public ResponseEntity<?> callGetAllViewers() {
         List<?> allByRole = userService.getAllByRole(1);
         return new ResponseEntity<>(allByRole, HttpStatus.OK);
     }
 
-    // delete viewer
     @DeleteMapping("/delete-this-viewer/{id}")
     public ResponseEntity<String> deleteViewer(@PathVariable String id) {
         UserEntity user = userService.getById(id);

@@ -70,10 +70,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 // Set authentication in SecurityContext
                 SecurityContextHolder.getContext().setAuthentication(authToken);
 
-                // Optional: Add user info to request attributes for downstream services
-                request.setAttribute("userId", jwtUtil.extractUserId(jwt));
-                request.setAttribute("username", username);
-                request.setAttribute("roles", roles);
             }
         }
 

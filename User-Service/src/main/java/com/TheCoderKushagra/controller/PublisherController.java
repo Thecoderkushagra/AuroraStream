@@ -1,13 +1,39 @@
 package com.TheCoderKushagra.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.TheCoderKushagra.dto.ViewerResponse;
+import com.TheCoderKushagra.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/publisher")
 public class PublisherController {
+    @Autowired
+    private UserService userService;
 
-    // update publisher { profile-pic, userName, Passwd }
+    @PutMapping("/update-pub-username")
+    public ResponseEntity<ViewerResponse> callUpdateUsername(
+            @RequestParam("id") String id,
+            @RequestParam("newName") String name
+    ) {
+        ViewerResponse response = userService.changeUsername(id, name);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
-    // delete publisher
+    @PutMapping("/update-pub-password")
+    public ResponseEntity<?> callChangePassword(
+            @RequestParam("id") String id,
+            @RequestParam("password") String password
+    ) {
+        ViewerResponse response = userService.changePassword(id, password);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-pub/{id}")
+    public ResponseEntity<String> callDeletedUser(@PathVariable String id) {
+        String response = userService.deleteUser(id);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 }

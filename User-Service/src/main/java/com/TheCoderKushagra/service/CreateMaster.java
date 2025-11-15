@@ -10,12 +10,14 @@ import com.TheCoderKushagra.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Component
 public class CreateMaster {
     @Autowired
     private UserRepository userRepository;
@@ -24,7 +26,7 @@ public class CreateMaster {
 
     @PostConstruct
     public void createMasterAdmin() {
-        boolean exist = userRepository.existByUserName("Master_Admin_Account");
+        boolean exist = userRepository.existsByUserName("Master_Admin_Account");
         if (!exist) {
             ActionLogs action = ActionLogs.builder()
                     .action("THE MASTER IS CREATED AT :" + LocalDateTime.now()).build();

@@ -1,18 +1,64 @@
 package com.TheCoderKushagra.controller;
 
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.TheCoderKushagra.dto.UserRequest;
+import com.TheCoderKushagra.dto.ViewerResponse;
+import com.TheCoderKushagra.entity.Roles;
+import com.TheCoderKushagra.entity.UserEntity;
+import com.TheCoderKushagra.service.UserService;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/master")
+
+@Slf4j
 public class MasterController {
+    @Autowired
+    private UserService userService;
 
-    // update password
+    @PutMapping("/update-viewer-password")
+    public ResponseEntity<?> callChangePassword(
+            @RequestParam("password") String password
+    ) {
+        UserEntity masterAdminAccount = userService.findUserByName("Master_Admin_Account");
+        ViewerResponse response = userService.changePassword(masterAdminAccount.getId(), password);
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
 
-    // create admins
+    @PostMapping("/create-admin")
+    public ResponseEntity<?> callSaveUser(
+            @RequestBody UserRequest request
 
-    // getALl admins
+    ) {
+        try {
 
-    // delete admin
+            ViewerResponse response = userService.saveUser(request, 3);
+            return new ResponseEntity<>(response.getUserName()+": ADMIN SAVED", HttpStatus.OK);
+        } catch (Exception e) {
+            log.error(e.getMessage());
+            return new ResponseEntity<>("SOME ERROR OCCURRED", HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @GetMapping("/all-admin")
+    public ResponseEntity<?> callGetAllViewers() {
+        List<?> allByRole = userService.getAllByRole(3);
+        return new ResponseEntity<>(allByRole, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-this-admin/{id}")
+    public ResponseEntity<String> deletePublisher(@PathVariable String id) {
+        UserEntity user = userService.getById(id);
+        if (user.getRole() == Roles.ADMIN) {
+            String s = userService.deleteUser(id);
+            return new ResponseEntity<>(s, HttpStatus.OK);
+        }
+        return new ResponseEntity<>(user.getUserName()+": is not an ADMIN", HttpStatus.OK);
+    }
 
 }
