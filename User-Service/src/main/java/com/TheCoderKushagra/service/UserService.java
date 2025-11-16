@@ -103,8 +103,6 @@ public class UserService {
                         .userName(ent.getUserName())
                         .email(ent.getEmail())
                         .role(ent.getRole())
-                        .actionLevel(ent.getAdminProfile() != null ?
-                                ent.getAdminProfile().getActionLevel() : null)
                         .build());
             }
             return adminList;

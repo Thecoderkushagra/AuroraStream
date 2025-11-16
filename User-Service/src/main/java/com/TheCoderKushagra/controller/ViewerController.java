@@ -15,7 +15,7 @@ public class ViewerController {
 
     @PutMapping("/update-viewer-username")
     public ResponseEntity<ViewerResponse> callUpdateUsername(
-            @RequestParam("id") String id,
+            @RequestHeader("X-User-Id") String id,
             @RequestParam("newName") String name
     ) {
         ViewerResponse response = userService.changeUsername(id, name);
@@ -24,15 +24,15 @@ public class ViewerController {
 
     @PutMapping("/update-viewer-password")
     public ResponseEntity<?> callChangePassword(
-            @RequestParam("id") String id,
+            @RequestHeader("X-User-Id") String id,
             @RequestParam("password") String password
     ) {
         ViewerResponse response = userService.changePassword(id, password);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-viewer/{id}")
-    public ResponseEntity<String> callDeletedUser(@PathVariable String id) {
+    @DeleteMapping("/delete-viewer")
+    public ResponseEntity<String> callDeletedUser(@RequestHeader("X-User-Id") String id) {
         String response = userService.deleteUser(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

@@ -20,9 +20,12 @@ public class UserEntity {
     private String id;
 
     @Indexed(unique = true)
+    @NonNull
     private String userName;
     @Indexed(unique = true)
+    @NonNull
     private String email;
+    @NonNull
     private String password;
 
     public Roles role;

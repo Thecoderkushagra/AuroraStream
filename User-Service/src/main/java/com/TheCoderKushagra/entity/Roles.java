@@ -1,5 +1,5 @@
 package com.TheCoderKushagra.entity;
 
 public enum Roles {
-    ADMIN, VIEWER, PUBLISHER
+    ADMIN, VIEWER, PUBLISHER, MASTER_ADMIN
 }

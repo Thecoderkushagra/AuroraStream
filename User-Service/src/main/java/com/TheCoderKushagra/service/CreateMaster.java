@@ -2,7 +2,6 @@ package com.TheCoderKushagra.service;
 
 import com.TheCoderKushagra.entity.Roles;
 import com.TheCoderKushagra.entity.UserEntity;
-import com.TheCoderKushagra.entity.admin.ActionLevel;
 import com.TheCoderKushagra.entity.admin.ActionLogs;
 import com.TheCoderKushagra.entity.admin.AdminProfile;
 import com.TheCoderKushagra.repository.ActionLogsRepository;
@@ -38,11 +37,8 @@ public class CreateMaster {
                     .userName("Master_Admin_Account")
                     .email("no-email")
                     .password("admin")
-                    .role(Roles.ADMIN)
-                    .adminProfile(new AdminProfile(
-                            ActionLevel.MASTER,
-                            actionLog
-                    ))
+                    .role(Roles.MASTER_ADMIN)
+                    .adminProfile(new AdminProfile(actionLog))
                     .build();
             UserEntity saved = userRepository.save(build);
             log.info("MASTER-ADMIN IS CREATED WITH USER-ID :{}", saved.getId());

@@ -21,22 +21,20 @@ public class MasterController {
     @Autowired
     private UserService userService;
 
-    @PutMapping("/update-viewer-password")
+    @PutMapping("/update-master-password")
     public ResponseEntity<?> callChangePassword(
+            @RequestHeader("X-User-Id") String Id,
             @RequestParam("password") String password
     ) {
-        UserEntity masterAdminAccount = userService.findUserByName("Master_Admin_Account");
-        ViewerResponse response = userService.changePassword(masterAdminAccount.getId(), password);
+        ViewerResponse response = userService.changePassword(Id, password);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
     @PostMapping("/create-admin")
     public ResponseEntity<?> callSaveUser(
             @RequestBody UserRequest request
-
     ) {
         try {
-
             ViewerResponse response = userService.saveUser(request, 3);
             return new ResponseEntity<>(response.getUserName()+": ADMIN SAVED", HttpStatus.OK);
         } catch (Exception e) {
@@ -45,14 +43,14 @@ public class MasterController {
         }
     }
 
-    @GetMapping("/all-admin")
+    @GetMapping("/get-all-admin")
     public ResponseEntity<?> callGetAllViewers() {
         List<?> allByRole = userService.getAllByRole(3);
         return new ResponseEntity<>(allByRole, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete-this-admin/{id}")
-    public ResponseEntity<String> deletePublisher(@PathVariable String id) {
+    @DeleteMapping("/delete-this-admin")
+    public ResponseEntity<String> deletePublisher(@RequestParam("id") String id) {
         UserEntity user = userService.getById(id);
         if (user.getRole() == Roles.ADMIN) {
             String s = userService.deleteUser(id);

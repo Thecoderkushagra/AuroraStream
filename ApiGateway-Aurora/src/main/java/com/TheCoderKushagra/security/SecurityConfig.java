@@ -34,27 +34,17 @@ public class SecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS
                 .authorizeHttpRequests(auth -> auth
-                        // Public endpoints - no authentication required
                         .requestMatchers("/user/auth/**").permitAll()
-                        .requestMatchers("/actuator/health").permitAll()
-                        .requestMatchers("/swagger-ui/**", "/v3/api-docs/**").permitAll()
-
-                        // Role-based authorization examples
-//                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-//                        .requestMatchers("/api/user/**").hasAnyRole("USER", "ADMIN")
-
-                        // All other requests need authentication
-                        .anyRequest().authenticated()
-                )
+                        .requestMatchers("/user/viewer/**").hasRole("VIEWER")
+                        .requestMatchers("/user/publisher/**").hasRole("PUBLISHER")
+                        .requestMatchers("/user/admin/**").hasAnyRole("ADMIN","MASTER_ADMIN")
+                        .requestMatchers("/user/master/**").hasRole("MASTER_ADMIN")
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .exceptionHandling(exception -> exception
-                        .authenticationEntryPoint(jwtAuthenticationEntryPoint())
-                )
-                // ADD JWT FILTER BEFORE UsernamePasswordAuthenticationFilter
+                        .authenticationEntryPoint(jwtAuthenticationEntryPoint()))
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-
         return http.build();
     }
 

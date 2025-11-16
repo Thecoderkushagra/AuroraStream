@@ -12,7 +12,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminProfile {
-    private ActionLevel actionLevel;
     @DBRef
     private List<ActionLogs> actionsLog;
 }
