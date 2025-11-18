@@ -9,6 +9,8 @@ import com.TheCoderKushagra.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
@@ -23,6 +25,8 @@ public class CreateMaster {
     @Autowired
     private ActionLogsRepository actionLogsRepository;
 
+    private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+
     @PostConstruct
     public void createMasterAdmin() {
         boolean exist = userRepository.existsByUserName("Master_Admin_Account");
@@ -36,7 +40,7 @@ public class CreateMaster {
             UserEntity build = UserEntity.builder()
                     .userName("Master_Admin_Account")
                     .email("no-email")
-                    .password("admin")
+                    .password(passwordEncoder.encode("admin"))
                     .role(Roles.MASTER_ADMIN)
                     .adminProfile(new AdminProfile(actionLog))
                     .build();

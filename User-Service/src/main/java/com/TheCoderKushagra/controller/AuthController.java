@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -68,22 +69,26 @@ public class AuthController {
     public ResponseEntity<?> login(
             @RequestParam("userName") String username,
             @RequestParam("password") String password
-    ){
+    ) {
         try {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
             UserEntity user = userService.findUserByName(username);
-
+            if (user == null) {
+                return new ResponseEntity<>("Incorrect username or password", HttpStatus.UNAUTHORIZED);
+            }
             String accessToken = jwtService.generateToken(user);
             String refreshToken = jwtService.generateRefreshToken(user);
-
-            return new ResponseEntity<>(
-                    Map.of( "accessToken",accessToken,
-                            "refreshToken",refreshToken )
-                    ,HttpStatus.OK);
-
+            return ResponseEntity.ok(
+                    Map.of( "accessToken", accessToken,
+                            "refreshToken", refreshToken )
+            );
         } catch (BadCredentialsException e) {
-            log.error("LOGIN ERROR :: BY {}",username);
-            return new ResponseEntity<>("Invalid credentials", HttpStatus.UNAUTHORIZED);
+            log.error("LOGIN ERROR :: BY {}", username);
+            return new ResponseEntity<>(
+                    Map.of("error", "Incorrect username or password"),
+                    HttpStatus.UNAUTHORIZED
+            );
         }
     }
+
 }

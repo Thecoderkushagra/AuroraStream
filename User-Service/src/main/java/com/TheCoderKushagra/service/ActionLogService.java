@@ -9,8 +9,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 @Service
 public class ActionLogService {
@@ -21,16 +19,15 @@ public class ActionLogService {
 
     // transaction banana hai
     public void addNewLog(String id, String log) {
-        UserEntity user = userRepository.findById(id)
-                .orElseThrow(()-> new RuntimeException("INVALID ID"));
-        ActionLogs newAction = ActionLogs.builder().action(log).build();
+        UserEntity user = userRepository.findById(id).orElseThrow(()-> new RuntimeException("INVALID ID"));
         if (user.getAdminProfile() == null) {
-            List<ActionLogs> LogList = new ArrayList<>();
-            LogList.add(newAction);
-            user.setAdminProfile(new AdminProfile(LogList));
+            user.setAdminProfile(new AdminProfile(new ArrayList<>()));
         }
-        else {
-            user.getAdminProfile().getActionsLog().add(newAction);
-        }
+        ActionLogs newAction = ActionLogs.builder()
+                .action(log)
+                .build();
+        ActionLogs saved = logsRepository.save(newAction);
+        user.getAdminProfile().getActionsLog().add(saved);
+        userRepository.save(user);
     }
 }

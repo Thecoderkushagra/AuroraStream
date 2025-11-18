@@ -24,7 +24,6 @@ public class GatewayRouterConfig {
     @Bean
     public RouterFunction<ServerResponse> userServiceRouter() {
         return RouterFunctions
-
                 // AUTH
                 .route(POST("/user/auth/login").and(accept(MediaType.APPLICATION_JSON)),
                         request -> requestService
@@ -51,7 +50,16 @@ public class GatewayRouterConfig {
                 // MASTER
                 .andRoute(DELETE("/user/master/delete-this-admin").and(accept(MediaType.APPLICATION_JSON)),
                         request -> requestService
-                                .forwardRequest(request, HttpMethod.DELETE, userService, "/master/delete-this-admin"));
+                                .forwardRequest(request, HttpMethod.DELETE, userService, "/master/delete-this-admin"))
+                .andRoute(PUT("/user/master/update-master-password").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.PUT, userService, "/master/update-master-password"))
+                .andRoute(POST("/user/master/create-admin").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.POST, userService, "/master/create-admin"))
+                .andRoute(GET("/user/master/get-all-admin").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.GET, userService, "/master/get-all-admin"));
     }
 
     // META-DATA SERVICE
