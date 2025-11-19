@@ -1,10 +1,20 @@
 package com.TheCoderKushagra.entity;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "video_content")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class VideoContent {
 
     @Id
@@ -17,7 +27,7 @@ public class VideoContent {
     private String description;
 
     @Enumerated(EnumType.STRING)
-    private ContentType type; // MOVIE or SERIES
+    private ContentType type;
 
     private Integer releaseYear;
 
