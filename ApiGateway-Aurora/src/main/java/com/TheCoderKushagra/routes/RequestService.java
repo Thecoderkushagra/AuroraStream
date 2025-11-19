@@ -21,7 +21,8 @@ public class RequestService {
         try {
             // Read request body (empty for GET requests)
             String requestBody = "";
-            if (method == HttpMethod.POST || method == HttpMethod.PUT || method == HttpMethod.PATCH) {
+            if ( method == HttpMethod.POST || method == HttpMethod.PUT ||
+                    method == HttpMethod.PATCH || method == HttpMethod.DELETE ) {
                 requestBody = request.body(String.class);
             }
 
@@ -53,8 +54,9 @@ public class RequestService {
             HttpEntity<String> entity = new HttpEntity<>(requestBody, newHeaders);
 
             // Make request to target service
+            String targetUrl = serviceUrl + path;
             ResponseEntity<String> response = restTemplate.exchange(
-                    serviceUrl + path, method, entity, String.class
+                    targetUrl, method, entity, String.class
             );
 
             // Return response

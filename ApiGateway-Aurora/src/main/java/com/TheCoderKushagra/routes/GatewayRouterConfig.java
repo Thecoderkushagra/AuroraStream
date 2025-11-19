@@ -45,8 +45,49 @@ public class GatewayRouterConfig {
                 .andRoute(DELETE("/user/viewer/delete-viewer").and(accept(MediaType.APPLICATION_JSON)),
                         request -> requestService
                                 .forwardRequest(request, HttpMethod.DELETE, userService, "/viewer/delete-viewer"))
+
                 // PUBLISHER
+                .andRoute(PUT("/user/publisher/update-pub-username").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.PUT, userService, "/publisher/update-pub-username"))
+                .andRoute(PUT("/user/publisher/update-pub-password").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.PUT, userService, "/publisher/update-pub-password"))
+                .andRoute(DELETE("/user/publisher/delete-pub").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.DELETE, userService, "/publisher/delete-pub"))
+
                 // ADMIN
+                .andRoute(GET("/user/admin/my-logs").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.GET, userService, "/admin/my-logs"))
+                .andRoute(PUT("/user/admin/update-admin-username").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.PUT, userService, "/admin/update-admin-username"))
+                .andRoute(PUT("/user/admin/update-admin-password").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.PUT, userService, "/admin/update-admin-password"))
+                .andRoute(DELETE("/user/admin/delete-admin").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.DELETE, userService, "/admin/delete-admin"))
+
+                .andRoute(POST("/user/admin/create-publisher").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.POST, userService, "/admin/create-publisher"))
+                .andRoute(GET("/user/admin/all-publishers").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.GET, userService, "/admin/all-publishers"))
+                .andRoute(DELETE("/user/admin/delete-this-pub").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.DELETE, userService, "/admin/delete-this-pub"))
+
+                .andRoute(GET("/user/admin/all-viewer").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.GET, userService, "/admin/all-viewer"))
+                .andRoute(DELETE("/user/admin/delete-this-viewer").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.DELETE, userService, "/admin/delete-this-viewer"))
+
                 // MASTER
                 .andRoute(DELETE("/user/master/delete-this-admin").and(accept(MediaType.APPLICATION_JSON)),
                         request -> requestService

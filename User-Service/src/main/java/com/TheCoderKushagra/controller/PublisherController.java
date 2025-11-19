@@ -15,7 +15,7 @@ public class PublisherController {
 
     @PutMapping("/update-pub-username")
     public ResponseEntity<ViewerResponse> callUpdateUsername(
-            @RequestParam("id") String id,
+            @RequestHeader("X-User-Id") String id,
             @RequestParam("newName") String name
     ) {
         ViewerResponse response = userService.changeUsername(id, name);
@@ -24,15 +24,19 @@ public class PublisherController {
 
     @PutMapping("/update-pub-password")
     public ResponseEntity<?> callChangePassword(
-            @RequestParam("id") String id,
+            @RequestHeader("X-User-Id") String id,
             @RequestParam("password") String password
     ) {
-        ViewerResponse response = userService.changePassword(id, password);
-        return new ResponseEntity<>(response, HttpStatus.OK);
+        try{
+            ViewerResponse response = userService.changePassword(id, password);
+            return new ResponseEntity<>(response, HttpStatus.OK);
+        } catch (Exception e) {
+            throw new RuntimeException(e.getMessage());
+        }
     }
 
-    @DeleteMapping("/delete-pub/{id}")
-    public ResponseEntity<String> callDeletedUser(@PathVariable String id) {
+    @DeleteMapping("/delete-pub")
+    public ResponseEntity<String> callDeletedUser(@RequestHeader("X-User-Id") String id) {
         String response = userService.deleteUser(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
     }

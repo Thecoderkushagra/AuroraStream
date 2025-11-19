@@ -13,7 +13,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/master")
@@ -57,10 +56,13 @@ public class MasterController {
     }
 
     @DeleteMapping("/delete-this-admin")
-    public ResponseEntity<String> deletePublisher(@RequestParam("id") String id) {
+    public ResponseEntity<String> deletePublisher(
+            @RequestHeader("X-User-Id") String Id,
+            @RequestParam("id") String id) {
         UserEntity user = userService.getById(id);
         if (user.getRole() == Roles.ADMIN) {
             String s = userService.deleteUser(id);
+            actionLogService.addNewLog(Id, "Master deleted Admin :" + user.getUserName());
             return new ResponseEntity<>(s, HttpStatus.OK);
         }
         return new ResponseEntity<>(user.getUserName()+": is not an ADMIN", HttpStatus.OK);
