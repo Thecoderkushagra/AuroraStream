@@ -34,9 +34,7 @@ public class VideoContent {
     // Only used if MOVIE
     private Integer durationInMinutes;
 
-    private String posterUrl;
-    private String bannerUrl;
-    private String trailerUrl;
+    private String thumbnailUrl;
 
     @ManyToMany
     @JoinTable(
