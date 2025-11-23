@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -24,8 +26,8 @@ public class VidService {
     @Autowired
     private VidRepository vidRepository;
 
-    String Temp = "C:\\Users\\Kushagra\\Videos\\TempVideo/";
-    String Hls = "C:\\Users\\Kushagra\\Videos\\HlsVideos/";
+    String Temp = "C:\\Users\\Kushagra\\Videos\\TempVideo\\";
+    String Hls = "C:\\Users\\Kushagra\\Videos\\HlsVideos\\";
 
     @PostConstruct
     public void Init() throws IOException {
@@ -37,8 +39,8 @@ public class VidService {
             log.info("FILE {} CREATED", file0);
         }else {
             log.info("FILE {} ALREADY EXISTS", file0);
-
-        }if(!file1.exists()){
+        }
+        if(!file1.exists()){
             boolean mkdir = file1.mkdir();
             log.info("FILE CREATED: {}", file1);
         }else {
@@ -65,18 +67,17 @@ public class VidService {
         } catch (IOException e) {
             log.error("ERROR:",e);
             return null;
-
         }
     }
 
     public void process(String videoId) {
-        VidEntity video = get(videoId);
+        VidEntity video = getVideoMetadata(videoId);
         String filePath = video.getFilePath();
 
-        String vid360p = Hls + videoId + "/360p/";
-        String vid480p = Hls + videoId + "/480p/";
-        String vid720p = Hls + videoId + "/720p/";
-        String vid1080p = Hls + videoId + "/1080p/";
+        String vid360p = Hls + videoId + "\\360p\\";
+        String vid480p = Hls + videoId + "\\480p\\";
+        String vid720p = Hls + videoId + "\\720p\\";
+        String vid1080p = Hls + videoId + "\\1080p\\";
 
         try{
             Files.createDirectories(Paths.get(vid360p));
@@ -89,17 +90,11 @@ public class VidService {
                     "ffmpeg", "-i", filePath, "-vf", "scale=640:360",
                     "-c:a", "aac", "-ar", "48000", "-b:a", "96k", "-c:v", "h264", "-b:v", "800k",
                     "-maxrate", "856k", "-bufsize", "1200k", "-hls_time", "10", "-hls_list_size", "0",
-                    "-hls_segment_filename", vid360p + "segment_%03d.ts", vid360p + "index.m3u8"
+                    "-hls_segment_filename", vid360p + "segment_%03d.ts",
+                    vid360p + "index.m3u8"
             );
-            System.out.println(build360);
-            ProcessBuilder pb360 = new ProcessBuilder(build360);
-            pb360.redirectErrorStream(true);
-            Process process360 = pb360.start();
-            int exitCode360 = process360.waitFor();
-            log.info("FFmpeg BUILD->360p exited with code {}", exitCode360);
-            if (exitCode360 != 0) {
-                throw new RuntimeException("FFmpeg failed with exit code: " + exitCode360);
-            }
+            log.info("Executing 360p command: {}", String.join(" ", build360));
+            executeCommand(build360, "360p");
 
             // 480p video builder
             List<String> build480 = Arrays.asList(
@@ -108,15 +103,8 @@ public class VidService {
                     "-maxrate", "1498k", "-bufsize", "2100k", "-hls_time", "10", "-hls_list_size", "0",
                     "-hls_segment_filename", vid480p + "segment_%03d.ts", vid480p + "index.m3u8"
             );
-            ProcessBuilder pb480 = new ProcessBuilder(build480);
-            pb480.redirectErrorStream(true);
-            Process process480 = pb480.start();
-
-            int exitCode480 = process480.waitFor();
-            log.info("FFmpeg BUILD->480p exited with code {}", exitCode480);
-            if (exitCode480 != 0) {
-                throw new RuntimeException("FFmpeg failed with exit code: " + exitCode480);
-            }
+            log.info("Executing 480p command: {}", String.join(" ", build480));
+            executeCommand(build480, "480p");
 
             // 720p video builder
             List<String> build720 = Arrays.asList(
@@ -125,14 +113,8 @@ public class VidService {
                     "-maxrate", "2996k", "-bufsize", "4200k", "-hls_time", "10", "-hls_list_size", "0",
                     "-hls_segment_filename", vid720p + "segment_%03d.ts", vid720p + "index.m3u8"
             );
-            ProcessBuilder pb720 = new ProcessBuilder(build720);
-            pb720.redirectErrorStream(true);
-            Process process720 = pb720.start();
-            int exitCode720 = process720.waitFor();
-            log.info("FFmpeg BUILD->720p exited with code {}", exitCode720);
-            if (exitCode720 != 0) {
-                throw new RuntimeException("FFmpeg failed with exit code: " + exitCode720);
-            }
+            log.info("Executing 720p command: {}", String.join(" ", build720));
+            executeCommand(build720, "720p");
 
             // 1080p video builder
             List<String> build1080 = Arrays.asList(
@@ -141,23 +123,52 @@ public class VidService {
                     "-maxrate", "5350k", "-bufsize", "7500k", "-hls_time", "10", "-hls_list_size", "0",
                     "-hls_segment_filename", vid1080p + "segment_%03d.ts", vid1080p + "index.m3u8"
             );
-            ProcessBuilder pb1080 = new ProcessBuilder(build1080);
-            pb1080.redirectErrorStream(true);
-            Process process1080 = pb1080.start();
-            int exitCode1080 = process1080.waitFor();
-            log.info("FFmpeg BUILD->1080p exited with code {}", exitCode1080);
-            if (exitCode1080 != 0) {
-                throw new RuntimeException("FFmpeg failed with exit code: " + exitCode1080);
-            }
+            log.info("Executing 1080p command: {}", String.join(" ", build1080));
+            executeCommand(build1080, "1080p");
+
+            log.info("Video processing completed successfully for videoId: {}", videoId);
 
         } catch (IOException | InterruptedException e) {
+            log.error("Error processing video: {}", videoId, e);
             throw new RuntimeException(e);
         }
     }
 
-    public VidEntity get(String videoId) {
+    private void executeCommand(List<String> command, String resolution) throws IOException, InterruptedException {
+        ProcessBuilder pb = new ProcessBuilder(command);
+        pb.redirectErrorStream(true);
+        Process process = pb.start();
+
+        // Read output in a separate thread to prevent buffer deadlock
+        Thread outputReader = readOutput(resolution, process);
+        outputReader.start();
+
+        int exitCode = process.waitFor();
+        System.out.println("FFmpeg BUILD->" + resolution + " exited with code " + exitCode);
+
+        if (exitCode != 0) {
+            throw new RuntimeException("FFmpeg failed with exit code: " + exitCode + " for resolution: " + resolution);
+        }
+    }
+
+    private static Thread readOutput(String resolution, Process process) {
+        Thread outputReader = new Thread(() -> {
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
+                String line;
+                while ((line = reader.readLine()) != null) {
+                    System.out.println("[FFmpeg-" + resolution + "] " + line);
+                }
+            } catch (IOException e) {
+                System.err.println("Error reading FFmpeg output: " + e.getMessage());
+            }
+        });
+        outputReader.setDaemon(true);
+        return outputReader;
+    }
+
+    public VidEntity getVideoMetadata(String videoId) {
         return vidRepository
                 .findById(videoId)
-                .orElseThrow(() -> new RuntimeException("VIDEO DOSE NOT EXIST"));
+                .orElseThrow(() -> new RuntimeException("VIDEO DOES NOT EXIST"));
     }
 }
