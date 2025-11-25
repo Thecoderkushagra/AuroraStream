@@ -1,6 +1,7 @@
 package com.TheCoderKushagra.controller;
 
 import com.TheCoderKushagra.entity.VidEntity;
+import com.TheCoderKushagra.repository.VidRepository;
 import com.TheCoderKushagra.service.VidService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -11,10 +12,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/aurora")
-@CrossOrigin("*")
+@CrossOrigin(origins = "*", methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE})
 public class vidController {
     @Autowired
     private VidService vidService;
+    @Autowired
+    private VidRepository vidRepository;
 
     @PostMapping("/save")
     public ResponseEntity<VidEntity> save(

@@ -19,4 +19,5 @@ public class VidEntity {
     private String description;
     private String contentType;
     private String filePath;
+    private String hlsPath;
 }
