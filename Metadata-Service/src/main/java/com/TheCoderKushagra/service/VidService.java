@@ -1,10 +1,12 @@
 package com.TheCoderKushagra.service;
 
+import com.TheCoderKushagra.dto.KafkaObject;
 import com.TheCoderKushagra.entity.VidEntity;
 import com.TheCoderKushagra.repository.VidRepository;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,6 +27,8 @@ import java.util.List;
 public class VidService {
     @Autowired
     private VidRepository vidRepository;
+    @Autowired
+    private KafkaTemplate<String, KafkaObject> kafkaTemplate;
 
     String Temp = "C:\\Users\\Kushagra\\Videos\\TempVideo\\";
     String Hls = "C:\\Users\\Kushagra\\Videos\\HlsVideos\\";
@@ -61,8 +65,13 @@ public class VidService {
             videoMetadata.setFilePath(videoFilePath.toString());
 
             VidEntity saved = vidRepository.save(videoMetadata);
-            process(saved.getVideoId());
-            Files.delete(videoFilePath);
+//            process(saved.getVideoId());
+//            Files.delete(videoFilePath);
+            // ADD A KAFKA TOPIC
+            KafkaObject kafkaObject = new KafkaObject(saved.getVideoId(), saved.getFilePath());
+            log.info("kafka starts");
+            kafkaTemplate.send("transcode", kafkaObject);
+            log.info("kafka ends");
             return saved;
         } catch (IOException e) {
             log.error("ERROR:",e);

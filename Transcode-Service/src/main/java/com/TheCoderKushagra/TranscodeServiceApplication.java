@@ -9,5 +9,4 @@ public class TranscodeServiceApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(TranscodeServiceApplication.class, args);
 	}
-
 }

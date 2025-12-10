@@ -1,16 +1,20 @@
 package com.TheCoderKushagra.entity;
 
 import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
-@Table(name = "content_rating")
-public class ContentRating {
-
+@Table(name = "movie")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String code; // PG-13, R, etc.
-    private String description;
-}
+    private VideoInfo videoInfo;
 
+}
