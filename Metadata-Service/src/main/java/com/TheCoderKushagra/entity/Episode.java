@@ -17,6 +17,7 @@ public class Episode {
     @Column(name = "episode_id")
     private String id;
 
+    @Embedded
     private VideoInfo videoInfo;
     private Integer episodeNumber;
 

@@ -21,7 +21,11 @@ public class Series {
     private String serisName;
     private String seriesDesc;
 
+    @Enumerated(EnumType.STRING)
+    private List<Genre> genre = new ArrayList<>();
+
     @OneToMany
     @JoinColumn(name = "episode_id")
     private List<Episode> episodes = new ArrayList<>();
+    private int totalEpisodes;
 }

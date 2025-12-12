@@ -1,7 +1,9 @@
 package com.TheCoderKushagra.controller;
 
+import com.TheCoderKushagra.dto.MovieRequest;
 import com.TheCoderKushagra.entity.VidEntity;
 import com.TheCoderKushagra.repository.VidRepository;
+import com.TheCoderKushagra.service.MovieService;
 import com.TheCoderKushagra.service.VidService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -17,6 +19,8 @@ public class vidController {
     private VidService vidService;
     @Autowired
     private VidRepository vidRepository;
+    @Autowired
+    private MovieService movieService;
 
     @PostMapping("/save")
     public ResponseEntity<VidEntity> save(
@@ -30,5 +34,24 @@ public class vidController {
                 .build();
         VidEntity object = vidService.saveVideo(vid, video);
         return new ResponseEntity<>(object, HttpStatus.OK);
+    }
+
+    @PostMapping("/movie")
+    public ResponseEntity<String> savePuri(
+            @RequestParam("videoFile") MultipartFile video,
+            @RequestParam("title") String title,
+            @RequestParam("desc") String desc
+    ){
+        MovieRequest build = MovieRequest.builder()
+                .title(title)
+                .description(desc)
+                .build();
+        String s = movieService.saveMovie(build, video);
+        return new ResponseEntity<>(s, HttpStatus.OK);
+    }
+
+    @GetMapping("/health-check")
+    public ResponseEntity<String> lol(){
+        return new ResponseEntity<>("path is working", HttpStatus.OK);
     }
 }
