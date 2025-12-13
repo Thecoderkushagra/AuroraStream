@@ -1,13 +1,11 @@
 package com.TheCoderKushagra.dto;
 
-import lombok.*;
+import com.TheCoderKushagra.entity.Genre;
 
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
-@Builder
-public class MovieRequest {
+import java.util.List;
+
+public class MovieResponse {
+    private String id;
     private String title;
     private String description;
 
@@ -16,5 +14,6 @@ public class MovieRequest {
     private String thumbnailUrl;
 
     private Integer durationInMinutes;
-    private String PublisherName;
+    private Long totalViews;
+    private List<Genre> genre;
 }

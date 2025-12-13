@@ -14,6 +14,7 @@ import java.time.LocalDateTime;
 @Builder
 public class VideoInfo {
     private String title;
+
     @Column(length = 2000)
     private String description;
 
@@ -22,7 +23,10 @@ public class VideoInfo {
     private String thumbnailUrl;
 
     private Integer durationInMinutes;
+
+    @Builder.Default
     private Long totalViews = 0L;
 
+    @Builder.Default
     private LocalDateTime uploadDate = LocalDateTime.now();
 }

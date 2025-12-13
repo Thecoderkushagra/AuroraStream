@@ -1,9 +1,0 @@
-package com.TheCoderKushagra.repository;
-
-import com.TheCoderKushagra.entity.VidEntity;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
-@Repository
-public interface VidRepository extends JpaRepository<VidEntity, String> {
-}

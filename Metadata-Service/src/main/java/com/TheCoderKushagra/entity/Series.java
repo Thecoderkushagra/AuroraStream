@@ -18,14 +18,19 @@ public class Series {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String serisName;
+    private String seriesName;
     private String seriesDesc;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "series_genres", joinColumns = @JoinColumn(name = "series_id"))
     @Enumerated(EnumType.STRING)
-    private List<Genre> genre = new ArrayList<>();
+    @Column(name = "genre")
+    private List<Genre> genres = new ArrayList<>();
 
-    @OneToMany
-    @JoinColumn(name = "episode_id")
+    private String publisherName;
+
+    @OneToMany(mappedBy = "series", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Episode> episodes = new ArrayList<>();
-    private int totalEpisodes;
+
+    private Integer totalEpisodes;
 }

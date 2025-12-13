@@ -21,7 +21,11 @@ public class Movie {
     @Embedded
     private VideoInfo videoInfo;
 
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "movie_genres", joinColumns = @JoinColumn(name = "movie_id"))
     @Enumerated(EnumType.STRING)
-    private List<Genre> genre;
+    @Column(name = "genre")
+    private List<Genre> genres = new ArrayList<>();
 
+    private String publisherName;
 }

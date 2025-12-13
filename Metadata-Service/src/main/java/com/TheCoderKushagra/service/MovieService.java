@@ -8,6 +8,7 @@ import com.TheCoderKushagra.entity.VideoInfo;
 import com.TheCoderKushagra.repository.MovieRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -28,8 +29,10 @@ public class MovieService {
     @Autowired
     private KafkaTemplate<String, KafkaObject> kafkaTemplate;
 
-    String Temp = "C:\\Users\\Kushagra\\Videos\\TempVideo\\";
-    String Hls = "C:\\Users\\Kushagra\\Videos\\HlsVideos\\";
+    @Value("${path.temp}")
+    private String Temp;
+    @Value("${path.stream}")
+    private String Hls;
 
     public String saveMovie(MovieRequest metadata, MultipartFile video) {
         if (video.isEmpty()){
@@ -60,9 +63,10 @@ public class MovieService {
 
             Movie movieMetadata = Movie.builder()
                     .videoInfo(videoBuild)
-                    .genre(new ArrayList<>(
+                    .genres(new ArrayList<>(
                             List.of(Genre.ROMANCE, Genre.COMEDY)
                     ))
+                    .publisherName(metadata.getPublisherName())
                     .build();
 
             Movie save = movieRepository.save(movieMetadata);
@@ -72,7 +76,7 @@ public class MovieService {
             kafkaTemplate.send("transcode", kafkaObject);
             log.info("kafka ends");
 
-            return videoTitle + " saved successfully with ID: ";
+            return videoTitle + " saved successfully with ID: " + save.getId();
         } catch(IOException e) {
             log.error("Failed to save video or write to disk", e);
             return "error: Failed to process video file.";

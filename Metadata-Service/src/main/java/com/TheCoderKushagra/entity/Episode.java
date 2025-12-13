@@ -19,7 +19,10 @@ public class Episode {
 
     @Embedded
     private VideoInfo videoInfo;
+
     private Integer episodeNumber;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "series_id")
+    private Series series;
 }
-
