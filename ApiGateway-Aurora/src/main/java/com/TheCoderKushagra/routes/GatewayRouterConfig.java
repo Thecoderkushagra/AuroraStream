@@ -18,8 +18,8 @@ public class GatewayRouterConfig {
 
     @Value("${route.user}")
     private String userService;
-    @Value("${route.stream}")
-    private String streamVideo;
+    @Value("${route.metadata}")
+    private String metadataService;
 
     // USER SERVICE
     @Bean
@@ -104,14 +104,12 @@ public class GatewayRouterConfig {
                                 .forwardRequest(request, HttpMethod.GET, userService, "/master/get-all-admin"));
     }
 
-    // STREAMING SERVICE
+    // METADATA SERVICE
     @Bean
-    public RouterFunction<ServerResponse> streamingService() {
+    public RouterFunction<ServerResponse> metadataServiceRouter() {
         return RouterFunctions
-                .route(GET("/stream/videoPlayer/**").and(accept(MediaType.APPLICATION_JSON)),
-                request -> requestService
-                        .forwardRequest(request, HttpMethod.GET, streamVideo, request.path()));
+                .route(POST("/publisher/save/movie").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.POST, metadataService, "/publish/movie"));
     }
-
-
 }

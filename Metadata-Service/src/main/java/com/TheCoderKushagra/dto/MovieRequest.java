@@ -16,5 +16,5 @@ public class MovieRequest {
     private String thumbnailUrl;
 
     private Integer durationInMinutes;
-    private String PublisherName;
+    private String publisherName;
 }
