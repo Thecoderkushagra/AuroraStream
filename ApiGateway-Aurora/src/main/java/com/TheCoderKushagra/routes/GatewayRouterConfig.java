@@ -57,6 +57,9 @@ public class GatewayRouterConfig {
                 .andRoute(DELETE("/user/publisher/delete-pub").and(accept(MediaType.APPLICATION_JSON)),
                         request -> requestService
                                 .forwardRequest(request, HttpMethod.DELETE, userService, "/publisher/delete-pub"))
+                .andRoute(PUT("/user/publisher/update-all").and(accept(MediaType.APPLICATION_JSON)),
+                        request -> requestService
+                                .forwardRequest(request, HttpMethod.PUT, userService, "/publisher/update-all"))
 
                 // ADMIN
                 .andRoute(GET("/user/admin/my-logs").and(accept(MediaType.APPLICATION_JSON)),

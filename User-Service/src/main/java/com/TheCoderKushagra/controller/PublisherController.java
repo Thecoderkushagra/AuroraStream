@@ -2,6 +2,8 @@ package com.TheCoderKushagra.controller;
 
 import com.TheCoderKushagra.dto.ViewerResponse;
 import com.TheCoderKushagra.entity.UserEntity;
+import com.TheCoderKushagra.entity.publisher.PublisherProfile;
+import com.TheCoderKushagra.repository.UserRepository;
 import com.TheCoderKushagra.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 public class PublisherController {
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserRepository userRepository;
 
     @PutMapping("/update-pub-username")
     public ResponseEntity<ViewerResponse> callUpdateUsername(
@@ -40,6 +44,23 @@ public class PublisherController {
     public ResponseEntity<String> callDeletedUser(@RequestHeader("X-User-Id") String id) {
         String response = userService.deleteUser(id);
         return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PutMapping("/update-all")
+    public ResponseEntity<String> updateAll(
+            @RequestHeader("X-User-Id") String id,
+            @RequestParam("studioName") String stdName,
+            @RequestParam("webName") String webName
+    ) {
+        UserEntity user = userService.getById(id);
+        if (user.getPublisherProfile() == null) {
+            PublisherProfile pp = new PublisherProfile();
+            user.setPublisherProfile(pp);
+        }
+        user.getPublisherProfile().setStudioName(stdName);
+        user.getPublisherProfile().setWebsiteUrl(webName);
+        userRepository.save(user);
+        return new ResponseEntity<>("Updated", HttpStatus.OK);
     }
 
     //==================
