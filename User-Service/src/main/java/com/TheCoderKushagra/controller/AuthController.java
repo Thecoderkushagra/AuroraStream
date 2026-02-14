@@ -54,7 +54,7 @@ public class AuthController {
             @RequestParam("OTP") String otp
     ){
         int viewer = 1; // save code of viewer is 1
-        String redisOtp = otpCache.getOtp(name + "otp", UserEntity.class);
+        String redisOtp = otpCache.getOtp(name + "otp");
         if (otp.equals(redisOtp)) {
             UserRequest userData = userCache.getUser(name, UserRequest.class);
             ViewerResponse response = userService.saveUser(userData, viewer);

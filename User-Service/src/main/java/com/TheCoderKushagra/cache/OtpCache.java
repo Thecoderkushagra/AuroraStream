@@ -29,7 +29,7 @@ public class OtpCache {
         }
     }
 
-    public String getOtp(String key, Class<UserEntity> userEntityClass){
+    public String getOtp(String key){
         try {
             Object o = redisTemplate.opsForValue().get(key);
             if (o != null){
