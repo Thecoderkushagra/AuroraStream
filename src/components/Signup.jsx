@@ -69,8 +69,6 @@ const Signup = () => {
                     Sign-Up
                 </button>
             </form>
-
-            <p className="text-center text-gray-400 text-sm mt-6">Already have an account? <span className="text-blue-400 hover:text-blue-300 cursor-pointer">Sign in</span></p>
         </div>
     );
 }
