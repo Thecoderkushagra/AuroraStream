@@ -1,5 +1,6 @@
 package com.TheCoderKushagra.service;
 
+import com.TheCoderKushagra.client.MailClient;
 import com.TheCoderKushagra.dto.AdminResponse;
 import com.TheCoderKushagra.dto.PublisherResponse;
 import com.TheCoderKushagra.dto.UserRequest;
@@ -10,6 +11,7 @@ import com.TheCoderKushagra.repository.CustomQuery;
 import com.TheCoderKushagra.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -26,6 +28,8 @@ public class UserService {
     private UserRepository userRepository;
     @Autowired
     private CustomQuery customQuery;
+    @Autowired
+    private MailClient mailClient;
 
     private static final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
@@ -116,6 +120,13 @@ public class UserService {
             uuidDigitsOnly.append(UUID.randomUUID().toString().replaceAll("[^0-9]", ""));
         }
         return uuidDigitsOnly.substring(0, 6);
+    }
+
+    @Async
+    public void sendOtp(String to, String otp) {
+        mailClient.sendSimpleMail(to, "OTP for Signup",
+                "Your OTP for SignUp verification is: " + otp +
+                        ". It is valid for 5 minutes. \n\nDo not share this OTP with anyone.");
     }
 
     public ViewerResponse changeUsername(String id, String newName) {

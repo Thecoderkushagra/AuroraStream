@@ -2,6 +2,7 @@ package com.TheCoderKushagra.controller;
 
 import com.TheCoderKushagra.cache.OtpCache;
 import com.TheCoderKushagra.cache.UserCache;
+import com.TheCoderKushagra.client.MailClient;
 import com.TheCoderKushagra.security.JwtService;
 import com.TheCoderKushagra.dto.UserRequest;
 import com.TheCoderKushagra.dto.ViewerResponse;
@@ -11,7 +12,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,7 +34,6 @@ public class AuthController {
     @Autowired
     private AuthenticationManager authenticationManager;
 
-    @Async
     @PostMapping("/signup")
     public ResponseEntity<String> signup(@RequestBody UserRequest request) {
         String userName = request.getUserName();
@@ -47,7 +46,7 @@ public class AuthController {
             return new ResponseEntity<>("Unable to connect to REDIS",HttpStatus.CONFLICT);
         }
         //send mail -> mail service
-
+        userService.sendOtp(request.getEmail(), otp);
         return new ResponseEntity<>("YOUR RESPONSE STORED SUCCESSFULLY",HttpStatus.OK);
     }
 
