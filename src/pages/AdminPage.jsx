@@ -14,9 +14,9 @@ const Admin = () =>{
                         Application Dashboard
                     </button>
                     <button onClick={() => setActive("admin")} className="w-full text-left px-3 py-2 rounded hover:bg-gray-700 text-gray-300 transition-colors">
-                        ADMIN CONTROLLER
+                        Admin Controller
                     </button>
-                    <button onClick={() => setActive("master")} className="w-full text-left px-3 py-2 rounded hover:bg-gray-700 text-gray-300 transition-colors">
+                    <button onClick={() => setActive("master")} className="w-full text-left px-3 py-2 rounded hover:bg-gray-700 text-red-300 transition-colors">
                         MASTER CONTROLLER
                     </button>
 

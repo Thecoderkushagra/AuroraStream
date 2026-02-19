@@ -4,29 +4,43 @@ const AppContext = createContext();
 
 export const AppProvider = ({ children }) => {
 
-  const [User, setUser] = useState({
+  const decodeToken = (token) => {
+    try {
+      const payload = token.split('.')[1];
+      const decoded = JSON.parse(atob(payload));
+      return decoded;
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const [user, setUser] = useState({
     jwt: null,
-    userId:null,
+    refreshToken: null,
+    userId: null,
     userName: null,
     role: null,
   });
 
-  const [appState, setAppState] = useState({
-    // Add your state properties here
-  });
-
-  const updateAppState = (newState) => {
-    setAppState((prevState) => ({
-      ...prevState,
-      ...newState,
-    }));
+  const login = (accessToken, refreshToken) => {
+    const decoded = decodeToken(accessToken);
+    setUser({
+      jwt: accessToken,
+      refreshToken,
+      userId: decoded?.userId ?? null,
+      userName: decoded?.userName ?? decoded?.sub ?? null,
+      role: decoded?.roles ?? null,  
+    });
   };
 
-  // The value provided to the context
+  const logout = () => {
+    setUser({ jwt: null, refreshToken: null, userId: null, userName: null, role: null });
+  };
+
   const contextValue = {
-    appState,
-    updateAppState,
-    User,
+    user,
+    login,
+    logout,
   };
 
   return (
@@ -36,11 +50,8 @@ export const AppProvider = ({ children }) => {
   );
 };
 
-// exception handling for useAppContext to ensure it's used within AppProvider
 export const useAppContext = () => {
   const context = useContext(AppContext);
-  if (!context) {
-    throw new Error('useAppContext must be used within AppProvider');
-  }
+  if (!context) throw new Error('useAppContext must be used within AppProvider');
   return context;
 };
