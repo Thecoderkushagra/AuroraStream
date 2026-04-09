@@ -1,19 +1,21 @@
 import React, { useState } from "react";
+import {
+  updateMasterPassword,
+  createAdmin,
+  getAllAdmins,
+  deleteAdmin,
+} from "../api/masterApi";
+import toast from "react-hot-toast";
 
-const MasterCtl = ({
-  onUpdatePassword,
-  onCreateAdmin,
-  onFetchAdmins,
-  onDeleteAdmin,
-}) => {
+const MasterCtl = () => {
   const [masterId, setMasterId] = useState("");
 
-  // Change password
+  /* ================= PASSWORD ================= */
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [pwMessage, setPwMessage] = useState("");
 
-  // Create admin
+  /* ================= CREATE ADMIN ================= */
   const [adminReq, setAdminReq] = useState({
     userName: "",
     password: "",
@@ -22,157 +24,227 @@ const MasterCtl = ({
   });
   const [createMessage, setCreateMessage] = useState("");
 
-  // Admin list
+  /* ================= ADMIN LIST ================= */
   const [admins, setAdmins] = useState([]);
   const [loadingAdmins, setLoadingAdmins] = useState(false);
 
+  /* ============================================= */
+  /* UPDATE MASTER PASSWORD */
+  /* ============================================= */
   const handleUpdatePassword = async (e) => {
     e.preventDefault();
-    setPwMessage("");
-    if (!masterId || !newPassword) return setPwMessage("Provide master id and new password");
-    if (newPassword !== confirmPassword) return setPwMessage("Passwords do not match");
 
-    const payload = { Id: masterId, password: newPassword };
-    if (onUpdatePassword) {
-      try {
-        const res = await onUpdatePassword(payload);
-        setPwMessage(res?.message || "Password update request prepared");
-      } catch (err) {
-        setPwMessage(err?.message || "Error");
-      }
-    } else {
-      console.log("update-master-password payload:", payload);
-      setPwMessage("Prepared payload (see console)");
+    if (newPassword !== confirmPassword)
+      return toast.error("Passwords do not match");
+
+    try {
+      const data = new FormData();
+      data.append("password", newPassword);
+      await updateMasterPassword({
+        body: data,
+      });
+
+      toast.success("Password updated successfully ✅");
+      setNewPassword("");
+      setConfirmPassword("");
+    } catch (err) {
+      toast.error(
+        err.response?.data || err.message || "Error updating password"
+      );
     }
-    setNewPassword("");
-    setConfirmPassword("");
   };
 
+  /* ============================================= */
+  /* CREATE ADMIN */
+  /* ============================================= */
   const handleCreateAdmin = async (e) => {
     e.preventDefault();
     setCreateMessage("");
-    if (!masterId) return setCreateMessage("Provide master id in header field");
-    if (!adminReq.userName || !adminReq.password) return setCreateMessage("userName and password required");
 
-    const payload = { ...adminReq };
-    if (onCreateAdmin) {
-      try {
-        const res = await onCreateAdmin({ Id: masterId, request: payload });
-        setCreateMessage(res?.message || "Create admin request prepared");
-        // optionally refresh list
-      } catch (err) {
-        setCreateMessage(err?.message || "Error");
-      }
-    } else {
-      console.log("create-admin payload:", { Id: masterId, request: payload });
-      setCreateMessage("Prepared payload (see console)");
+    if (!masterId)
+      return setCreateMessage("Provide master id in header field");
+
+    if (!adminReq.userName || !adminReq.password)
+      return setCreateMessage("userName and password required");
+
+    try {
+      const res = await createAdmin({
+        Id: masterId,
+        request: adminReq,
+      });
+
+      setCreateMessage(res || "Admin created successfully ✅");
+      setAdminReq({
+        userName: "",
+        password: "",
+        fullName: "",
+        email: "",
+      });
+    } catch (err) {
+      setCreateMessage(
+        err.response?.data || err.message || "Error creating admin"
+      );
     }
-    setAdminReq({ userName: "", password: "", fullName: "", email: "" });
   };
 
+  /* ============================================= */
+  /* FETCH ADMINS */
+  /* ============================================= */
   const handleFetchAdmins = async () => {
     setLoadingAdmins(true);
+
     try {
-      if (onFetchAdmins) {
-        const res = await onFetchAdmins();
-        setAdmins(Array.isArray(res) ? res : []);
-      } else {
-        console.log("get-all-admin invoked (no handler)");
-        setAdmins([]);
-      }
+      const res = await getAllAdmins();
+      setAdmins(Array.isArray(res) ? res : []);
     } catch (err) {
       console.error(err);
       setAdmins([]);
     }
+
     setLoadingAdmins(false);
   };
 
+  /* ============================================= */
+  /* DELETE ADMIN */
+  /* ============================================= */
   const handleDeleteAdmin = async (id) => {
     if (!masterId) return alert("Provide master id in header field");
-    if (!confirm("Delete this admin?")) return;
-    if (onDeleteAdmin) {
-      try {
-        await onDeleteAdmin({ Id: masterId, id });
-        setAdmins((s) => s.filter((a) => a.id !== id && a._id !== id));
-      } catch (err) {
-        alert(err?.message || "Error deleting");
-      }
-    } else {
-      console.log("delete-this-admin payload:", { Id: masterId, id });
-      setAdmins((s) => s.filter((a) => a.id !== id && a._id !== id));
+    if (!window.confirm("Delete this admin?")) return;
+
+    try {
+      await deleteAdmin({
+        Id: masterId,
+        id,
+      });
+
+      setAdmins((prev) => prev.filter((a) => a.id !== id));
+    } catch (err) {
+      alert(err.response?.data || err.message || "Error deleting");
     }
   };
 
+  /* ============================================= */
   return (
-    <div className="space-y-6">
-      <div className="bg-[#212529] p-6 rounded-lg">
-        <label className="block mb-2 text-sm text-gray-300">Master Id (X-User-Id header)</label>
-        <input value={masterId} onChange={(e) => setMasterId(e.target.value)} className="w-full p-2 rounded bg-gray-800 text-gray-100" placeholder="master id" />
-      </div>
+    <div className="p-6 space-y-6 text-white">
 
-      <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <form onSubmit={handleUpdatePassword} className="bg-[#212529] p-6 rounded-lg">
-          <h3 className="font-semibold mb-4">Change Master Password</h3>
-          <input type="password" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className="w-full p-2 mb-3 rounded bg-gray-800 text-gray-100" placeholder="New password" />
-          <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="w-full p-2 mb-3 rounded bg-gray-800 text-gray-100" placeholder="Confirm password" />
-          <div className="flex gap-2">
-            <button type="submit" className="px-4 py-2 bg-green-600 rounded">Update</button>
-            <button type="button" onClick={() => { setNewPassword(""); setConfirmPassword(""); setPwMessage(""); }} className="px-4 py-2 bg-gray-600 rounded">Clear</button>
-          </div>
-          {pwMessage && <p className="mt-3 text-sm text-gray-300">{pwMessage}</p>}
-        </form>
+      {/* CHANGE PASSWORD */}
+      <form onSubmit={handleUpdatePassword} className="bg-gray-800 p-4 rounded">
+        <h3 className="text-green-400 font-bold mb-2">Change Master Password</h3>
 
-        <form onSubmit={handleCreateAdmin} className="bg-[#212529] p-6 rounded-lg">
-          <h3 className="font-semibold mb-4">Create Admin</h3>
-          <input value={adminReq.userName} onChange={(e) => setAdminReq({ ...adminReq, userName: e.target.value })} className="w-full p-2 mb-2 rounded bg-gray-800 text-gray-100" placeholder="userName" />
-          <input value={adminReq.password} onChange={(e) => setAdminReq({ ...adminReq, password: e.target.value })} className="w-full p-2 mb-2 rounded bg-gray-800 text-gray-100" placeholder="password" />
-          <input value={adminReq.fullName} onChange={(e) => setAdminReq({ ...adminReq, fullName: e.target.value })} className="w-full p-2 mb-2 rounded bg-gray-800 text-gray-100" placeholder="fullName" />
-          <input value={adminReq.email} onChange={(e) => setAdminReq({ ...adminReq, email: e.target.value })} className="w-full p-2 mb-3 rounded bg-gray-800 text-gray-100" placeholder="email" />
-          <div className="flex gap-2">
-            <button type="submit" className="px-4 py-2 bg-blue-600 rounded">Create</button>
-            <button type="button" onClick={() => setAdminReq({ userName: "", password: "", fullName: "", email: "" })} className="px-4 py-2 bg-gray-600 rounded">Clear</button>
-          </div>
-          {createMessage && <p className="mt-3 text-sm text-gray-300">{createMessage}</p>}
-        </form>
-      </section>
+        <input
+          type="password"
+          placeholder="New password"
+          value={newPassword}
+          onChange={(e) => setNewPassword(e.target.value)}
+          className="w-full p-2 mb-2 bg-gray-900 rounded"
+        />
 
-      <section className="bg-[#212529] p-6 rounded-lg">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="font-semibold">Admins</h3>
-          <div className="flex gap-2">
-            <button onClick={handleFetchAdmins} className="px-3 py-1 bg-indigo-600 rounded">{loadingAdmins ? "Loading..." : "Refresh"}</button>
-            <button onClick={() => { setAdmins([]); }} className="px-3 py-1 bg-gray-600 rounded">Clear</button>
-          </div>
+        <input
+          type="password"
+          placeholder="Confirm password"
+          value={confirmPassword}
+          onChange={(e) => setConfirmPassword(e.target.value)}
+          className="w-full p-2 mb-2 bg-gray-900 rounded"
+        />
+
+        <button onClick={handleUpdatePassword} className="bg-green-600 px-4 py-2 rounded hover:bg-green-700 transition-colors">
+          Update Password
+        </button>
+
+        {pwMessage && <p className="mt-2 text-sm">{pwMessage}</p>}
+      </form>
+
+      {/* CREATE ADMIN */}
+      <form onSubmit={handleCreateAdmin} className="bg-gray-800 p-4 rounded">
+        <h3 className="text-blue-400 font-bold mb-2">Create Admin</h3>
+
+        <input
+          placeholder="Username"
+          value={adminReq.userName}
+          onChange={(e) =>
+            setAdminReq({ ...adminReq, userName: e.target.value })
+          }
+          className="w-full p-2 mb-2 bg-gray-900 rounded"
+        />
+
+        <input
+          placeholder="Password"
+          value={adminReq.password}
+          onChange={(e) =>
+            setAdminReq({ ...adminReq, password: e.target.value })
+          }
+          className="w-full p-2 mb-2 bg-gray-900 rounded"
+        />
+
+        <input
+          placeholder="Full Name"
+          value={adminReq.fullName}
+          onChange={(e) =>
+            setAdminReq({ ...adminReq, fullName: e.target.value })
+          }
+          className="w-full p-2 mb-2 bg-gray-900 rounded"
+        />
+
+        <input
+          placeholder="Email"
+          value={adminReq.email}
+          onChange={(e) =>
+            setAdminReq({ ...adminReq, email: e.target.value })
+          }
+          className="w-full p-2 mb-2 bg-gray-900 rounded"
+        />
+
+        <button className="bg-blue-600 px-4 py-2 rounded">
+          Create Admin
+        </button>
+
+        {createMessage && <p className="mt-2 text-sm">{createMessage}</p>}
+      </form>
+
+      {/* ADMIN LIST */}
+      <div className="bg-gray-800 p-4 rounded">
+        <div className="flex justify-between mb-4">
+          <h3 className="text-indigo-400 font-bold">Admin Accounts</h3>
+          <button
+            onClick={handleFetchAdmins}
+            className="bg-indigo-600 px-4 py-2 rounded"
+          >
+            {loadingAdmins ? "Loading..." : "Refresh"}
+          </button>
         </div>
 
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm">
+        {admins.length === 0 ? (
+          <p className="text-gray-400">No admins loaded</p>
+        ) : (
+          <table className="w-full text-sm">
             <thead>
-              <tr className="text-gray-300">
-                <th className="py-2">ID</th>
-                <th className="py-2">UserName</th>
-                <th className="py-2">Email</th>
-                <th className="py-2">Actions</th>
+              <tr className="border-b border-gray-600">
+                <th>ID</th>
+                <th>UserName</th>
+                <th>Email</th>
+                <th></th>
               </tr>
             </thead>
             <tbody>
-              {admins.length === 0 && (
-                <tr><td colSpan={4} className="py-4 text-gray-400">No admins loaded</td></tr>
-              )}
               {admins.map((a) => (
-                <tr key={a.id || a._id} className="border-t border-gray-700">
-                  <td className="py-2 text-gray-200">{a.id || a._id}</td>
-                  <td className="py-2 text-gray-200">{a.userName || a.user_name || a.user}</td>
-                  <td className="py-2 text-gray-200">{a.email || "-"}</td>
-                  <td className="py-2">
-                    <button onClick={() => handleDeleteAdmin(a.id || a._id)} className="px-2 py-1 bg-red-600 rounded">Delete</button>
+                <tr key={a.id} className="border-t border-gray-700">
+                  <td>{a.id.slice(0, 8)}...</td>
+                  <td>{a.userName}</td>
+                  <td>{a.email}</td>
+                  <td>
+                    <button
+                      onClick={() => handleDeleteAdmin(a.id)}
+                      className="bg-red-600 px-3 py-1 rounded"
+                    >
+                      Delete
+                    </button>
                   </td>
                 </tr>
               ))}
             </tbody>
           </table>
-        </div>
-      </section>
+        )}
+      </div>
     </div>
   );
 };

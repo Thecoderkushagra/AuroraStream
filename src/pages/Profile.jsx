@@ -3,9 +3,18 @@ import Overview from "../components/ProfOverview";
 import Billing from "../components/ProfBilling";
 import Settings from "../components/ProfSettings";
 import Security from "../components/ProfSecurity";
+import { useAppContext } from '../context/AppContext';
+import { useNavigate } from 'react-router-dom';
 
 const Profile = () => {
+    const navigate = useNavigate();
+    const {logout} = useAppContext();
     const [activeTab, setActiveTab] = useState("overview");
+
+    function handleLogout() {
+        logout();
+        navigate('/');
+    }
     
     return (
         <div className="min-h-screen text-gray-100 p-6 flex gap-6">
@@ -23,7 +32,7 @@ const Profile = () => {
                     <button onClick={() => setActiveTab("billing")} className="w-full text-left px-3 py-2 rounded hover:bg-gray-700 text-gray-300 transition-colors">
                         Billing
                     </button>
-                    <button className= "text-left px-3 py-2 rounded bg-red-700 hover:bg-red-800 text-gray-200 hover:text-white transition-colors">
+                    <button onClick={handleLogout} className= "text-left px-3 py-2 rounded bg-red-700 hover:bg-red-800 text-gray-200 hover:text-white transition-colors">
                         Logout
                     </button>
                 </nav>

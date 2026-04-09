@@ -14,37 +14,38 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  const [user, setUser] = useState({
-    jwt: null,
-    refreshToken: null,
-    userId: null,
-    userName: null,
-    role: null,
+  // ✅ Initialize state directly from localStorage
+  const [user, setUser] = useState(() => {
+    const storedUser = localStorage.getItem("user");
+    return storedUser ? JSON.parse(storedUser) : {
+      jwt: null,
+      refreshToken: null,
+      userId: null,
+      userName: null,
+      role: null,
+    };
   });
 
   const login = (accessToken, refreshToken) => {
     const decoded = decodeToken(accessToken);
-    setUser({
+    const newUser = {
       jwt: accessToken,
       refreshToken,
       userId: decoded?.userId ?? null,
       userName: decoded?.userName ?? decoded?.sub ?? null,
-      role: decoded?.roles ?? null,  
-    });
+      role: decoded?.roles ?? null,
+    };
+    setUser(newUser);
+    localStorage.setItem("user", JSON.stringify(newUser)); // ✅ save newUser, not stale `user`
   };
 
   const logout = () => {
     setUser({ jwt: null, refreshToken: null, userId: null, userName: null, role: null });
-  };
-
-  const contextValue = {
-    user,
-    login,
-    logout,
+    localStorage.removeItem("user");
   };
 
   return (
-    <AppContext.Provider value={contextValue}>
+    <AppContext.Provider value={{ user, login, logout }}>
       {children}
     </AppContext.Provider>
   );
