@@ -9,6 +9,7 @@ import Login from "./features/public/pages/Login";
 import Signup from "./features/public/pages/Signup";
 import Terms from "./features/public/pages/Terms";
 import Privacy from "./features/public/pages/Privacy";
+import Pricing from "./features/public/pages/Pricing";
 
 export default function App() {
     return (
@@ -17,6 +18,7 @@ export default function App() {
 
                 {/* Public */}
                 <Route path="/" element={<Landing />} />
+                <Route path="/pricing" element={<Pricing />} />
 
                 {/* Auth Layout */}
                 <Route element={<AuthLayout />}>

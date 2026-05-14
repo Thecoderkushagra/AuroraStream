@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
+import Nav from "../../../assets/Nav";
 
 /* ── Fake content tiles ─────────────────────────────────── */
 const TILES = [
@@ -167,8 +168,6 @@ export default function Landing() {
     return (
         <>
             <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Urbanist:wght@300;400;500;600;700;800;900&display=swap');
-
         @keyframes orbFloat {
           0%, 100% { transform: translateY(0px) scale(1); }
           50%       { transform: translateY(-30px) scale(1.05); }
@@ -252,15 +251,6 @@ export default function Landing() {
           -webkit-text-fill-color: transparent;
         }
 
-        .nav-link {
-          color: var(--color-text-muted);
-          text-decoration: none;
-          font-size: 14px;
-          font-weight: 500;
-          transition: color 0.2s;
-        }
-        .nav-link:hover { color: var(--color-text-primary); }
-
         .divider-line {
           border: none;
           border-top: 1px solid var(--color-border);
@@ -280,41 +270,7 @@ export default function Landing() {
             <div style={{ minHeight: "100vh", background: "var(--color-bg-base)", color: "var(--color-text-primary)", fontFamily: "'Urbanist', sans-serif", overflowX: "hidden" }}>
 
                 {/* ── NAV ── */}
-                <nav style={{
-                    position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
-                    display: "flex", alignItems: "center", justifyContent: "space-between",
-                    padding: "0 48px", height: "64px",
-                    background: "rgba(26,29,32,0.8)", backdropFilter: "blur(16px)",
-                    borderBottom: "1px solid rgba(255,255,255,0.06)",
-                }}>
-                    {/* Logo */}
-                    <div style={{ display: "flex", flexDirection: "column", userSelect: "none", lineHeight: 1 }}>
-                        <span style={{ fontSize: "29px", fontWeight: 800, letterSpacing: "3px", color: "var(--color-text-primary)" }}>
-                            A<span style={{ background: "linear-gradient(90deg,#00d4ff,#007bff)", WebkitBackgroundClip: "text", backgroundClip: "text", WebkitTextFillColor: "transparent" }}>uror</span>a
-                        </span>
-                        <span style={{ fontSize: "14px", fontWeight: 600, letterSpacing: "3px", color: "var(--color-text-muted)", marginTop: "-2px" }}>
-                            <span style={{ color: "var(--color-primary)" }}>STREA</span>M|
-                        </span>
-                    </div>
-
-                    {/* Links */}
-                    <div style={{ display: "flex", gap: "32px", alignItems: "center" }}>
-                        <a href="#features" className="nav-link">Features</a>
-                        <a href="#browse" className="nav-link">Browse</a>
-                        <a href="#pricing" className="nav-link">Pricing</a>
-                    </div>
-
-                    {/* Auth */}
-                    <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-                        <Link to="/login" className="nav-link">Sign in</Link>
-                        <Link to="/signup" style={{
-                            background: "var(--color-primary)", color: "#fff",
-                            padding: "8px 20px", borderRadius: "8px", fontSize: "14px",
-                            fontWeight: 600, textDecoration: "none",
-                            transition: "background 0.2s",
-                        }}>Get Started</Link>
-                    </div>
-                </nav>
+                <Nav />
 
                 {/* ── HERO ── */}
                 <section style={{ position: "relative", paddingTop: "140px", paddingBottom: "80px", textAlign: "center", overflow: "hidden" }}>
