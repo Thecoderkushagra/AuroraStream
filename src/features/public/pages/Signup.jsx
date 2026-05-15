@@ -1,7 +1,7 @@
 // features/public/pages/Signup.jsx
 import { Link } from "react-router-dom";
 import { useState } from "react";
-import Logo from "../../../assets/Logo";
+import Logo from "../../../components/common/Logo";
 
 export default function Signup() {
     const [focused, setFocused] = useState(null);

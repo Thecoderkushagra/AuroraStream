@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import Nav from "../../../assets/Nav";
+import Nav from "../../../components/common/Nav";
 
 /* ── Fake content tiles ─────────────────────────────────── */
 const TILES = [

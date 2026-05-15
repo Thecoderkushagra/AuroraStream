@@ -7,6 +7,7 @@ import AuthLayout from "./layout/AuthLayout";
 import Landing from "./features/public/pages/Landing";
 import Login from "./features/public/pages/Login";
 import Signup from "./features/public/pages/Signup";
+import ForgotPassword from "./features/public/pages/ForgotPassword";
 import Terms from "./features/public/pages/Terms";
 import Privacy from "./features/public/pages/Privacy";
 import Pricing from "./features/public/pages/Pricing";
@@ -24,6 +25,7 @@ export default function App() {
                 <Route element={<AuthLayout />}>
                     <Route path="/login" element={<Login />} />
                     <Route path="/signup" element={<Signup />} />
+                    <Route path="/forgotpasswd" element={<ForgotPassword />} />
                 </Route>
 
                 {/* Legal */}

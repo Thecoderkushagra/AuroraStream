@@ -1,11 +1,23 @@
-// features/public/pages/Login.jsx
+// features/public/pages/ForgotPassword.jsx
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import Logo from "../../../components/common/Logo";
 
-export default function Login() {
+export default function ForgotPassword() {
     const [focused, setFocused] = useState(null);
     const [hovered, setHovered] = useState(false);
+    const [isSubmitted, setIsSubmitted] = useState(false);
+    const [isSubmitting, setIsSubmitting] = useState(false);
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        setIsSubmitting(true);
+        // Simulate network request
+        setTimeout(() => {
+            setIsSubmitting(false);
+            setIsSubmitted(true);
+        }, 1200);
+    };
 
     const inputStyle = (name) => ({
         width: "100%",
@@ -24,6 +36,8 @@ export default function Login() {
         boxShadow: focused === name
             ? "0 0 0 3px rgba(0, 123, 255, 0.12)"
             : "none",
+        opacity: isSubmitted ? 0.6 : 1,
+        pointerEvents: isSubmitted ? "none" : "auto",
     });
 
     return (
@@ -33,6 +47,9 @@ export default function Login() {
             borderRadius: "20px",
             padding: "40px 36px 36px",
             boxShadow: "0 8px 40px rgba(0,0,0,0.3), 0 0 80px rgba(0,123,255,0.04)",
+            width: "100%",
+            maxWidth: "420px",
+            margin: "0 auto",
         }}>
             {/* Logo */}
             <div style={{ display: "flex", justifyContent: "center", marginBottom: "8px" }}>
@@ -48,20 +65,21 @@ export default function Login() {
                     margin: "0 0 8px",
                     letterSpacing: "-0.02em",
                 }}>
-                    Welcome back
+                    Reset Password
                 </h2>
                 <p style={{
                     fontSize: "14px",
                     color: "var(--color-text-muted)",
                     margin: 0,
                     fontWeight: 400,
+                    lineHeight: "1.5",
                 }}>
-                    Sign in to continue streaming
+                    Enter your email address and we'll send you a link to reset your password.
                 </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
                 {/* Email */}
                 <div>
                     <label style={{
@@ -77,51 +95,35 @@ export default function Login() {
                     </label>
                     <input
                         type="email"
+                        required
                         placeholder="you@example.com"
                         style={inputStyle("email")}
                         onFocus={() => setFocused("email")}
                         onBlur={() => setFocused(null)}
+                        disabled={isSubmitted || isSubmitting}
                     />
                 </div>
 
-                {/* Password */}
-                <div>
+                {/* Status Message (shows after submit) */}
+                {isSubmitted && (
                     <div style={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        marginBottom: "6px",
-                    }}>
-                        <label style={{
-                            fontSize: "12px",
-                            fontWeight: 600,
-                            color: "var(--color-text-muted)",
-                            letterSpacing: "0.04em",
-                            textTransform: "uppercase",
-                        }}>
-                            Password
-                        </label>
-                    </div>
-                    <input
-                        type="password"
-                        placeholder="••••••••"
-                        style={inputStyle("password")}
-                        onFocus={() => setFocused("password")}
-                        onBlur={() => setFocused(null)}
-                    />
-                    <Link to="/forgotpasswd" style={{
-                        fontSize: "12px",
-                        color: "var(--color-primary)",
-                        textDecoration: "none",
+                        padding: "12px 16px",
+                        background: "var(--color-live-bg)",
+                        border: "1px solid var(--color-live)",
+                        borderRadius: "var(--radius-md)",
+                        color: "var(--color-live)",
+                        fontSize: "13px",
                         fontWeight: 500,
+                        textAlign: "center",
                     }}>
-                        Forgot Password?
-                    </Link>
-                </div>
+                        If an account exists, a reset link has been sent to your email.
+                    </div>
+                )}
 
                 {/* Submit */}
                 <button
                     type="submit"
+                    disabled={isSubmitted || isSubmitting}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
                     style={{
@@ -131,53 +133,47 @@ export default function Login() {
                         fontWeight: 700,
                         fontFamily: "'Urbanist', sans-serif",
                         color: "#fff",
-                        background: hovered
+                        background: hovered && !isSubmitted && !isSubmitting
                             ? "var(--color-primary-hover)"
-                            : "var(--color-primary)",
+                            : (isSubmitted ? "var(--color-live)" : "var(--color-primary)"),
                         border: "none",
                         borderRadius: "var(--radius-lg)",
-                        cursor: "pointer",
+                        cursor: (isSubmitted || isSubmitting) ? "default" : "pointer",
                         transition: "background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease",
-                        boxShadow: hovered
+                        boxShadow: hovered && !isSubmitted && !isSubmitting
                             ? "0 0 24px rgba(0,123,255,0.4)"
-                            : "0 2px 12px rgba(0,123,255,0.2)",
-                        transform: hovered ? "translateY(-1px)" : "none",
+                            : (isSubmitted ? "0 2px 12px rgba(34,197,94,0.2)" : "0 2px 12px rgba(0,123,255,0.2)"),
+                        transform: hovered && !isSubmitted && !isSubmitting ? "translateY(-1px)" : "none",
                         marginTop: "8px",
                         letterSpacing: "0.02em",
+                        opacity: isSubmitting ? 0.8 : 1,
                     }}
                 >
-                    Sign In
+                    {isSubmitting ? "Sending..." : isSubmitted ? "Link Sent" : "Send Reset Link"}
                 </button>
             </form>
 
-            {/* Divider */}
+            {/* Back to Login link */}
             <div style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "16px",
-                margin: "28px 0",
-            }}>
-                <div style={{ flex: 1, height: "1px", background: "var(--color-border)" }} />
-                <span style={{ fontSize: "12px", color: "var(--color-text-muted)", fontWeight: 500 }}>or</span>
-                <div style={{ flex: 1, height: "1px", background: "var(--color-border)" }} />
-            </div>
-
-            {/* Sign up link */}
-            <p style={{
+                marginTop: "28px",
                 textAlign: "center",
-                fontSize: "14px",
-                color: "var(--color-text-muted)",
-                margin: 0,
             }}>
-                Don't have an account?{" "}
-                <Link to="/signup" style={{
-                    color: "var(--color-primary)",
-                    textDecoration: "none",
-                    fontWeight: 600,
+                <p style={{
+                    fontSize: "14px",
+                    color: "var(--color-text-muted)",
+                    margin: 0,
                 }}>
-                    Create one
-                </Link>
-            </p>
+                    Remember your password?{" "}
+                    <Link to="/login" style={{
+                        color: "var(--color-primary)",
+                        textDecoration: "none",
+                        fontWeight: 600,
+                        transition: "color 0.2s",
+                    }}>
+                        Sign in
+                    </Link>
+                </p>
+            </div>
         </div>
     );
 }
