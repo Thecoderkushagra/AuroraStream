@@ -4,26 +4,26 @@
 /* ─── AuroraStream Design Tokens ─────────────────────────── */
 :root {
     /* Brand */
-    --color-aurora: linear-gradient(90deg, #00d4ff, #007bff);
-    --color-primary: #007bff;
-    --color-primary-dark: #0056b3;
-    --color-primary-hover: #1a8cff;
+    --color-aurora: linear-gradient(90deg, #00d4ff, #2563eb);
+    --color-primary: #2563eb;
+    --color-primary-dark: #1d4ed8;
+    --color-primary-hover: #3b82f6;
     --color-accent: #00d4ff;
-    --color-primary-muted: rgba(50, 118, 255, 0.15);
-    --color-primary-glow: rgba(50, 118, 255, 0.4);
+    --color-primary-muted: rgba(37, 99, 235, 0.15);
+    --color-primary-glow: rgba(37, 99, 235, 0.4);
 
     /* Surfaces */
-    --color-bg-base: #1a1d20;
-    --color-bg-surface: #22262b;
-    --color-bg-elevated: #2b3039;
-    --color-bg-hover: #353c47;
-    --color-bg-overlay: rgba(18, 20, 22, 0.85);
+    --color-bg-base: #09090b;
+    --color-bg-surface: #18181b;
+    --color-bg-elevated: #27272a;
+    --color-bg-hover: #3f3f46;
+    --color-bg-overlay: rgba(9, 9, 11, 0.85);
 
     /* Text */
-    --color-text-primary: #f3f2f2;
-    --color-text-secondary: #d6d6d6;
-    --color-text-muted: #8a9bb0;
-    --color-text-accent: #007bff;
+    --color-text-primary: #ffffff;
+    --color-text-secondary: #d4d4d8;
+    --color-text-muted: #9ca3af;
+    --color-text-accent: #3b82f6;
 
     /* Status */
     --color-live: #22c55e;
@@ -36,9 +36,9 @@
     --color-premium-bg: rgba(139, 92, 246, 0.12);
 
     /* Borders */
-    --color-border: #2e3540;
-    --color-border-strong: #3d4a5c;
-    --color-border-focus: rgba(0, 123, 255, 0.4);
+    --color-border: #27272a;
+    --color-border-strong: #3f3f46;
+    --color-border-focus: rgba(37, 99, 235, 0.4);
 
     /* Spacing */
     --radius-sm: 4px;

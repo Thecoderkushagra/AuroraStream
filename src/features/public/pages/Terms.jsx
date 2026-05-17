@@ -1,5 +1,3 @@
-import "../../../index.css";
-
 export default function Terms() {
     return (
         <div className="min-h-screen bg-base text-secondary pt-8">

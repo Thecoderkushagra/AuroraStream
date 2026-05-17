@@ -18,8 +18,8 @@ export default function Nav() {
                 position: "fixed", top: 0, left: 0, right: 0, zIndex: 100,
                 display: "flex", alignItems: "center", justifyContent: "space-between",
                 padding: "0 48px", height: "85px",
-                background: "rgba(26,29,32,0.8)", backdropFilter: "blur(16px)",
-                borderBottom: "1px solid rgba(255,255,255,0.06)",
+                background: "var(--color-bg-overlay)", backdropFilter: "blur(16px)",
+                borderBottom: "1px solid var(--color-border)",
             }}>
                 {/* Logo */}
                 <Link to="/" style={{ textDecoration: "none" }}><Logo /></Link>

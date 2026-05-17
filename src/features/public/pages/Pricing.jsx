@@ -1,6 +1,5 @@
 import { Link } from "react-router-dom";
 import Nav from "../../../components/common/Nav";
-import "../../../index.css";
 import { useState } from "react";
 
 export default function Pricing() {
