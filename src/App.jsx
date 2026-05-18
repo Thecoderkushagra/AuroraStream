@@ -19,6 +19,7 @@ import Movies from "./features/user/pages/explore/Movies";
 import Series from "./features/user/pages/explore/Series";
 import MyList from "./features/user/pages/explore/MyList";
 import WatchHistory from "./features/user/pages/explore/WatchHistory";
+import Plans from "./features/user/pages/subscription/Plans";
 
 // profile pages
 import Overview from "./features/user/pages/profile/Overview";
@@ -49,6 +50,7 @@ export default function App() {
                     <Route path="series" element={<Series />} />
                     <Route path="my-list" element={<MyList />} />
                     <Route path="watch-history" element={<WatchHistory />} />
+                    <Route path="subscription" element={<Plans />} />
                     
                     {/* Profile */}
                     <Route path="profile">
