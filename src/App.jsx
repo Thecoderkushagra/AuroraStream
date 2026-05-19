@@ -15,6 +15,16 @@ import UploadEpisode from "./features/creator/pages/videos/UploadEpisode";
 import PublicProfile from "./features/creator/pages/profile/PublicProfile";
 import CreatorSettings from "./features/creator/pages/profile/Settings";
 
+// admin components
+import AdminSidebar, { currentAdmin } from "./features/admin/layout/AdminSidebar";
+import AdminOverview from "./features/admin/pages/dashboard/Overview";
+import ManageUsers from "./features/admin/pages/manage/ManageUsers";
+import ManageCreators from "./features/admin/pages/manage/ManageCreators";
+import Moderation from "./features/admin/pages/content/Moderation";
+import ReportsQueue from "./features/admin/pages/reports/ReportsQueue";
+import Transactions from "./features/admin/pages/payments/Transactions";
+import ManageAdmins from "./features/admin/pages/manage/ManageAdmins";
+
 // public pages
 import Landing from "./features/public/pages/Landing";
 import Login from "./features/public/pages/Login";
@@ -83,6 +93,24 @@ export default function App() {
                     <Route path="upload-episode" element={<UploadEpisode />} />
                     <Route path="profile" element={<PublicProfile />} />
                     <Route path="settings" element={<CreatorSettings />} />
+                </Route>
+
+                {/* Admin Layout */}
+                <Route path="/admin" element={<ApplicationLayout Sidebar={AdminSidebar} />}>
+                    <Route index element={<AdminOverview />} />
+                    <Route path="manage/users" element={<ManageUsers />} />
+                    <Route path="manage/creators" element={<ManageCreators />} />
+                    <Route path="content" element={<Moderation />} />
+                    <Route path="reports" element={<ReportsQueue />} />
+                    <Route path="payments" element={<Transactions />} />
+                    <Route 
+                        path="manage/admins" 
+                        element={
+                            currentAdmin.role === "master_admin" 
+                                ? <ManageAdmins /> 
+                                : <Navigate to="/admin" replace />
+                        } 
+                    />
                 </Route>
 
                 {/* Legal */}
