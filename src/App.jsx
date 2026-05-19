@@ -1,8 +1,19 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
 // layouts
+import ApplicationLayout from "./layout/ApplicationLayout";
 import AuthLayout from "./layout/AuthLayout";
 import UserLayout from "./features/user/layout/UserLayout";
+
+// creator components
+import CreatorSidebar from "./features/creator/layout/CreatorSidebar";
+import CreatorOverview from "./features/creator/pages/dashboard/Overview";
+import MyVideos from "./features/creator/pages/videos/MyVideos";
+import UploadMovie from "./features/creator/pages/videos/UploadMovie";
+import CreateSeries from "./features/creator/pages/videos/CreateSeries";
+import UploadEpisode from "./features/creator/pages/videos/UploadEpisode";
+import PublicProfile from "./features/creator/pages/profile/PublicProfile";
+import CreatorSettings from "./features/creator/pages/profile/Settings";
 
 // public pages
 import Landing from "./features/public/pages/Landing";
@@ -45,6 +56,7 @@ export default function App() {
 
                 {/* User Layout */}
                 <Route path="/user" element={<UserLayout />}>
+                    <Route index element={<Navigate to="home" replace />} />
                     <Route path="home" element={<Home />} />
                     <Route path="movies" element={<Movies />} />
                     <Route path="series" element={<Series />} />
@@ -60,6 +72,17 @@ export default function App() {
                         <Route path="security" element={<Security />} />
                         <Route path="billing" element={<Billing />} />
                     </Route>
+                </Route>
+
+                {/* Creator Layout */}
+                <Route path="/creator" element={<ApplicationLayout Sidebar={CreatorSidebar} />}>
+                    <Route index element={<CreatorOverview />} />
+                    <Route path="videos" element={<MyVideos />} />
+                    <Route path="upload-movie" element={<UploadMovie />} />
+                    <Route path="create-series" element={<CreateSeries />} />
+                    <Route path="upload-episode" element={<UploadEpisode />} />
+                    <Route path="profile" element={<PublicProfile />} />
+                    <Route path="settings" element={<CreatorSettings />} />
                 </Route>
 
                 {/* Legal */}
