@@ -1,4 +1,4 @@
-// features/public/pages/ForgotPassword.jsx
+// features/public/reset/ForgotPassword.jsx
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import Logo from "../../../components/common/Logo";

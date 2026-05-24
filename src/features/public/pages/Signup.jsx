@@ -2,11 +2,19 @@
 import { Link } from "react-router-dom";
 import { useState } from "react";
 import Logo from "../../../components/common/Logo";
+import Otp from "../../../components/common/Otp";
 
 export default function Signup() {
     const [focused, setFocused] = useState(null);
     const [hovered, setHovered] = useState(false);
     const [agreed, setAgreed] = useState(false);
+    
+    // Form and OTP states
+    const [showOtp, setShowOtp] = useState(false);
+    const [userEmail, setUserEmail] = useState("");
+    const [nameInput, setNameInput] = useState("");
+    const [emailInput, setEmailInput] = useState("");
+    const [passwordInput, setPasswordInput] = useState("");
 
     const inputStyle = (name) => ({
         width: "100%",
@@ -26,6 +34,18 @@ export default function Signup() {
             ? "0 0 0 3px rgba(0, 123, 255, 0.12)"
             : "none",
     });
+
+    const handleSubmit = (e) => {
+        e.preventDefault();
+        if (agreed && nameInput && emailInput && passwordInput) {
+            setUserEmail(emailInput);
+            setShowOtp(true);
+        }
+    };
+
+    if (showOtp) {
+        return <Otp email={userEmail} />;
+    }
 
     return (
         <div style={{
@@ -54,8 +74,8 @@ export default function Signup() {
             </div>
 
             {/* Form */}
-            <form onSubmit={(e) => e.preventDefault()} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-                {/* Username */}
+            <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+                {/* Username / Name */}
                 <div>
                     <label style={{
                         display: "block",
@@ -66,11 +86,14 @@ export default function Signup() {
                         letterSpacing: "0.04em",
                         textTransform: "uppercase",
                     }}>
-                        Username
+                        Name
                     </label>
                     <input
                         type="text"
-                        placeholder="johndoe"
+                        placeholder="John Doe"
+                        value={nameInput}
+                        onChange={(e) => setNameInput(e.target.value)}
+                        required
                         style={inputStyle("username")}
                         onFocus={() => setFocused("username")}
                         onBlur={() => setFocused(null)}
@@ -93,6 +116,9 @@ export default function Signup() {
                     <input
                         type="email"
                         placeholder="you@example.com"
+                        value={emailInput}
+                        onChange={(e) => setEmailInput(e.target.value)}
+                        required
                         style={inputStyle("email")}
                         onFocus={() => setFocused("email")}
                         onBlur={() => setFocused(null)}
@@ -115,6 +141,9 @@ export default function Signup() {
                     <input
                         type="password"
                         placeholder="••••••••"
+                        value={passwordInput}
+                        onChange={(e) => setPasswordInput(e.target.value)}
+                        required
                         style={inputStyle("password")}
                         onFocus={() => setFocused("password")}
                         onBlur={() => setFocused(null)}
@@ -131,6 +160,7 @@ export default function Signup() {
                 }}>
                     <input
                         type="checkbox"
+                        required
                         checked={agreed}
                         onChange={(e) => setAgreed(e.target.checked)}
                         style={{

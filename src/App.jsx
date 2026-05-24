@@ -29,7 +29,7 @@ import ManageAdmins from "./features/admin/pages/manage/ManageAdmins";
 import Landing from "./features/public/pages/Landing";
 import Login from "./features/public/pages/Login";
 import Signup from "./features/public/pages/Signup";
-import ForgotPassword from "./features/public/pages/ForgotPassword";
+import ForgotPassword from "./features/public/reset/ForgotPassword";
 import Terms from "./features/public/pages/Terms";
 import Privacy from "./features/public/pages/Privacy";
 import Pricing from "./features/public/pages/Pricing";

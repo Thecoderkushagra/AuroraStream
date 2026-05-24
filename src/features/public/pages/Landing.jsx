@@ -22,8 +22,8 @@ const FEATURES = [
                 <path d="M10 9.5v9l9-4.5-9-4.5z" fill="currentColor" />
             </svg>
         ),
-        title: "4K Ultra HD",
-        desc: "Stream in crystal-clear 4K HDR with Dolby Atmos surround sound.",
+        title: "1080p Full HD",
+        desc: "Stream in crystal-clear 1080p FHD with Dolby Atmos surround sound.",
     },
     {
         icon: (
@@ -42,8 +42,8 @@ const FEATURES = [
                 <path d="M14 3L17.5 10.5L26 11.5L20 17.5L21.5 26L14 22L6.5 26L8 17.5L2 11.5L10.5 10.5L14 3Z" stroke="currentColor" strokeWidth="1.5" strokeLinejoin="round" />
             </svg>
         ),
-        title: "No Ads. Ever.",
-        desc: "Pure uninterrupted viewing. No mid-roll ads, no banners, no distractions.",
+        title: "No Ads",
+        desc: "Pure uninterrupted viewing on Standard and Premium plans. No mid-roll ads, no banners, no distractions.",
     },
     {
         icon: (
@@ -287,7 +287,7 @@ export default function Landing() {
                             borderRadius: "9999px", padding: "6px 16px", marginBottom: "28px",
                         }}>
                             <span style={{ width: "7px", height: "7px", borderRadius: "50%", background: "var(--color-live)", display: "inline-block", animation: "aurora-pulse 2s ease-in-out infinite" }} />
-                            <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-accent)", letterSpacing: "0.06em" }}>Now Streaming · 4K HDR Available</span>
+                            <span style={{ fontSize: "12px", fontWeight: 600, color: "var(--color-accent)", letterSpacing: "0.06em" }}>Now Streaming · FHD Available</span>
                         </div>
 
                         {/* H1 */}
@@ -310,7 +310,7 @@ export default function Landing() {
                             fontSize: "18px", color: "var(--color-text-muted)", lineHeight: 1.7,
                             maxWidth: "520px", margin: "0 auto 40px", fontWeight: 400,
                         }}>
-                            Thousands of movies, series & originals — streamed in 4K, ad-free, across all your devices.
+                            Thousands of movies, series & originals — Now stream in FHD, across all your devices.
                         </p>
 
                         {/* CTA */}
@@ -326,7 +326,7 @@ export default function Landing() {
 
                         {/* Fine print */}
                         <p className="anim-hero-note" style={{ fontSize: "12px", color: "var(--color-text-muted)", marginTop: "20px" }}>
-                            No credit card required · Cancel anytime
+                            No credit card required · Start with UPI now
                         </p>
                     </div>
 
@@ -424,7 +424,7 @@ export default function Landing() {
                             }}>waiting.</span>
                         </h2>
                         <p style={{ fontSize: "16px", color: "var(--color-text-muted)", marginBottom: "36px", lineHeight: 1.6 }}>
-                            Join millions of viewers. First 30 days on us.
+                            Join with millions of viewers on Aurora Stream.
                         </p>
                         <Link to="/signup" className="cta-primary" style={{ fontSize: "17px", padding: "16px 48px" }}>
                             Create Free Account

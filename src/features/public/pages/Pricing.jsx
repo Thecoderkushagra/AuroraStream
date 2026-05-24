@@ -11,7 +11,7 @@ export default function Pricing() {
                     Choose the Plan That <span className="text-aurora">Fits You.</span>
                 </h1>
                 <p className="text-lg max-w-[500px] mx-auto mb-10" style={{ color: "var(--color-text-muted)" }}>
-                    Choose the perfect plan for you. Upgrade, downgrade, or cancel at any time.
+                    Choose the perfect plan for you. Upgrade anytime.
                 </p>
             </div>
 

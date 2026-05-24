@@ -6,7 +6,7 @@ export default function Plans() {
             <div className="max-w-6xl mx-auto mb-10">
                 <h1 className="text-3xl font-bold mb-2">Manage Subscription</h1>
                 <p className="text-lg" style={{ color: "var(--color-text-muted)" }}>
-                    Upgrade, downgrade, or review your current plan.
+                    Upgrade or review your current plan anytime you want.
                 </p>
             </div>
             

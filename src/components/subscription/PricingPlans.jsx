@@ -5,10 +5,10 @@ export default function PricingPlans({ mode }) {
 
     const plans = [
         {
-            name: "Basic",
-            monthlyPrice: "$8.99",
+            name: "Free",
+            monthlyPrice: "₹ 0",
             features: [
-                "720p HD",
+                "480p Streaming",
                 "Watch on 1 device",
                 "Limited downloads",
             ],
@@ -19,30 +19,30 @@ export default function PricingPlans({ mode }) {
         },
         {
             name: "Standard",
-            monthlyPrice: "$13.99",
+            monthlyPrice: "₹ 149",
             features: [
-                "1080p Full HD",
+                "720p HD",
                 "Watch on 2 devices",
                 "Unlimited downloads",
             ],
             color: "var(--color-primary)",
             border: "var(--color-primary)",
-            glow: "none",
+            glow: "0 0 40px var(--color-primary-muted)",
+            recommended: true,
             tier: 2,
         },
         {
             name: "Premium",
-            monthlyPrice: "$19.99",
+            monthlyPrice: "₹ 249",
             features: [
-                "4K Ultra HD",
+                "1080p Full HD",
                 "Watch on 4 devices",
                 "Dolby Atmos",
                 "Early access content",
             ],
             color: "var(--color-premium)",
             border: "var(--color-premium)",
-            glow: "0 0 40px rgba(139, 92, 246, 0.15)",
-            recommended: true,
+            glow: "none",
             tier: 3,
         }
     ];
@@ -69,7 +69,7 @@ export default function PricingPlans({ mode }) {
                 return (
                     <div 
                         key={plan.name} 
-                        className={`flex flex-col rounded-2xl relative transition-transform duration-300 p-8 ${plan.recommended ? 'lg:scale-105 z-10' : 'z-0'}`}
+                        className={`flex flex-col rounded-2xl relative transition-transform duration-300 p-8 ${plan.recommended ? 'z-10' : 'z-0'}`}
                         style={{
                             background: "var(--color-bg-surface)",
                             border: `1px solid ${plan.border}`,
