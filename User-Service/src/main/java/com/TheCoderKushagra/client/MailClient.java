@@ -4,7 +4,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-@FeignClient(value = "Mail-Service", url = "http://localhost:9015/")
+@FeignClient(value = "Mail-Service")
 public interface MailClient {
     @PostMapping("/email/simple")
     void sendSimpleMail(@RequestParam String to, @RequestParam String subject, @RequestParam String content);

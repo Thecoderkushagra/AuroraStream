@@ -1,8 +1,7 @@
 package com.TheCoderKushagra.cache;
 
-import com.TheCoderKushagra.entity.UserEntity;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -11,9 +10,10 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class OtpCache {
-    @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+
+    private final RedisTemplate<String,String> redisTemplate;
 
     public boolean setOtp(String key, String value, long timeToLive){
         try{
