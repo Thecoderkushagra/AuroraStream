@@ -14,10 +14,12 @@ AuroraStream follows a microservices architecture where each service handles a s
 - **Transcode-Service**: Consumes transcoding tasks from Kafka and uses **FFmpeg** to convert raw videos into multi-resolution HLS streams (360p, 480p, 720p, 1080p).
 - **Streaming-Service**: Serves the HLS playlist files (`.m3u8`) and video segments (`.ts`) to the client.
 - **Mail-Service**: Handles transactional emails such as OTP verification and notifications.
+- **frontend**: React + Vite client application that acts as the user interface for the streaming platform.
 
 ## 🛠️ Tech Stack
 
 - **Backend**: Java 17+, Spring Boot, Spring Cloud (Gateway, Eureka)
+- **Frontend**: React 19, Vite, TailwindCSS v4, Axios
 - **Databases**:
   - **PostgreSQL**: Shared database (`streaming_db`) with isolated schemas (`user_schema`, `metadata_schema`).
   - **Redis**: Caching OTPs and user sessions for high performance.
@@ -31,6 +33,7 @@ AuroraStream follows a microservices architecture where each service handles a s
 ### Prerequisites
 - JDK 17 or higher
 - Maven 3.x
+- Node.js & npm (for the frontend client)
 - Docker and Docker Compose
 - **FFmpeg** installed on the host machine (for Transcode-Service)
 
@@ -64,6 +67,22 @@ Start the services in the following order:
 5. **Transcode-Service** (Port: 9007)
 6. **Streaming-Service** (Port: 9012)
 7. **Mail-Service** (Port: 9015)
+
+### 5. Running the Frontend Client
+The frontend user interface is located in the [frontend](file:///home/kushagra/Documents/AuroraStream/frontend) directory. To set it up and run it:
+1. Navigate to the frontend directory:
+   ```bash
+   cd frontend
+   ```
+2. Install the dependencies:
+   ```bash
+   npm install
+   ```
+3. Start the development server (runs on Port 5173 by default):
+   ```bash
+   npm run dev
+   ```
+
 
 ## 🎞️ Video Processing Workflow
 1. **Publisher** uploads a video through the `Metadata-Service`.
