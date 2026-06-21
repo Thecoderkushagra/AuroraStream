@@ -8,9 +8,10 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import javax.crypto.SecretKey;
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class JwtGatewayUtil {
@@ -18,13 +19,17 @@ public class JwtGatewayUtil {
     private String secret;
 
     private Key getSigningKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(secret);
-        return Keys.hmacShaKeyFor(keyBytes);
+        try {
+            byte[] keyBytes = Decoders.BASE64.decode(secret);
+            return Keys.hmacShaKeyFor(keyBytes);
+        } catch (Exception e) {
+            return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        }
     }
 
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .setSigningKey(getSigningKey())
+                .verifyWith((SecretKey) getSigningKey())
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();
@@ -35,11 +40,13 @@ public class JwtGatewayUtil {
     }
 
     public String extractUserId(String token) {
-        return extractAllClaims(token).get("userId", String.class);
+        Object userId = extractAllClaims(token).get("userId");
+        return userId != null ? String.valueOf(userId) : null;
     }
 
     public String extractRoles(String token) {
-        return extractAllClaims(token).get("roles", String.class);
+        Object roles = extractAllClaims(token).get("roles");
+        return roles != null ? String.valueOf(roles) : null;
     }
 
 

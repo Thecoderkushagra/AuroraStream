@@ -1,20 +1,27 @@
 package com.TheCoderKushagra.dto;
 
-import com.TheCoderKushagra.entity.Roles;
-import lombok.*;
+import com.TheCoderKushagra.entity.enums.AccountStatus;
+import com.TheCoderKushagra.entity.enums.Role;
+import lombok.Builder;
 
-import java.util.List;
+import java.time.LocalDateTime;
 
-@Getter @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @Builder
-public class ViewerResponse {
-    private String id;
-    private String userName;
-    private String email;
-    public Roles role;
-    private String avatarUrl;
-    private List<String> viewerList;
-    private List<String> watchHistory;
-}
+public record ViewerResponse(
+        String username,
+        String email,
+        Role role,
+        LocalDateTime createdAt,
+        AccountStatus accountStatus,
+        Long totalWatchTime,
+        int videosWatched,
+        int myList,
+        String currentPlan,
+        String planStatus,
+        LocalDateTime renewalDate,
+        boolean autoPlayNext,
+        String defaultVidQuality,
+        boolean notification,
+        boolean subscriptionRenewalReminders,
+        boolean recommendation
+) { }

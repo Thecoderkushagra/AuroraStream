@@ -17,10 +17,9 @@ AuroraStream follows a microservices architecture where each service handles a s
 
 ## 🛠️ Tech Stack
 
-- **Backend**: Java 17, Spring Boot, Spring Cloud (Gateway, Eureka)
+- **Backend**: Java 17+, Spring Boot, Spring Cloud (Gateway, Eureka)
 - **Databases**:
-  - **MongoDB**: User profiles and authentication data.
-  - **MySQL**: Video metadata, categories, and relationships.
+  - **PostgreSQL**: Shared database (`streaming_db`) with isolated schemas (`user_schema`, `metadata_schema`).
   - **Redis**: Caching OTPs and user sessions for high performance.
 - **Messaging**: Apache Kafka (with Zookeeper)
 - **Video Processing**: FFmpeg (HLS Transcoding)
@@ -38,17 +37,20 @@ AuroraStream follows a microservices architecture where each service handles a s
 ### 1. Infrastructure Setup
 Run the following command to start Kafka and Zookeeper:
 ```bash
-docker-compose -f aurora-compose.yml up -d
+docker-compose -f docker-compose.yml up -d
 ```
 *Note: Ensure you have MongoDB, MySQL, and Redis running either locally or in containers.*
 
 ### 2. Database Configuration
-Create a MySQL database named `metadata_aurora`. MongoDB and Redis will handle collection/key creation automatically upon first use.
+The project uses a shared PostgreSQL database (`streaming_db`) with isolated schemas. The schemas (`user_schema`, `metadata_schema`) are automatically created on startup via the `init.sql` script mounted in the Docker container.
 
 ### 3. Environment Variables
 Ensure the following environment variables are set in your system or provided in `application.properties`:
-- `MONGO_URI`: MongoDB connection string.
-- `REDIS_URI`: Redis connection string.
+- `REDIS_HOST`: Redis host (defaults to localhost).
+- `REDIS_USER`: Username for Redis.
+- `REDIS_PASSWD`: Password for Redis.
+- `POSTGRES_USER`: Username for PostgreSQL.
+- `POSTGRES_PASSWD`: Password for PostgreSQL.
 - `JWT_SECRET`: Secret key for JWT signing.
 - `AURORA_MAIL`: Gmail address for Mail-Service.
 - `AURORA_MAIL_PASSWORD`: Gmail App Password for Mail-Service.

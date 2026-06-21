@@ -1,95 +1,66 @@
 package com.TheCoderKushagra.controller;
 
-import com.TheCoderKushagra.cache.OtpCache;
-import com.TheCoderKushagra.cache.UserCache;
-import com.TheCoderKushagra.client.MailClient;
-import com.TheCoderKushagra.security.JwtService;
-import com.TheCoderKushagra.dto.UserRequest;
-import com.TheCoderKushagra.dto.ViewerResponse;
-import com.TheCoderKushagra.entity.UserEntity;
-import com.TheCoderKushagra.service.UserService;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.TheCoderKushagra.dto.LoginRequest;
+import com.TheCoderKushagra.dto.OtpRequest;
+import com.TheCoderKushagra.dto.SignupRequest;
+import com.TheCoderKushagra.service.AuthService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.BadCredentialsException;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
-@Slf4j
 @RestController
 @RequestMapping("/auth")
+@RequiredArgsConstructor
 public class AuthController {
-    @Autowired
-    private JwtService jwtService;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private UserCache userCache;
-    @Autowired
-    private OtpCache otpCache;
-    @Autowired
-    private AuthenticationManager authenticationManager;
+
+    private final AuthService authService;
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@RequestBody UserRequest request) {
-        String userName = request.getUserName();
-        String otp = userService.generateSixDigitNumber();
-        boolean uc = userCache.setUser(userName, request, 300);
-        boolean oc = otpCache.setOtp(userName + "otp", otp, 300);
-        if (!uc || !oc) {
-            log.warn("Failed to cache data for user: {}. UserCached: {}, OtpCached: {}",
-                    userName, uc, oc);
-            return new ResponseEntity<>("Unable to connect to REDIS",HttpStatus.CONFLICT);
+    public ResponseEntity<Map<String, String>> signup(@Valid @RequestBody SignupRequest request) {
+        try {
+            String response = authService.signupUser(request);
+            return ResponseEntity.ok(Map.of("Response", response));
+        } catch (RuntimeException e) {
+            return ResponseEntity.badRequest().body(Map.of("Error", e.getMessage()));
         }
-        //send mail -> mail service
-        userService.sendOtp(request.getEmail(), otp);
-        return new ResponseEntity<>("YOUR RESPONSE STORED SUCCESSFULLY",HttpStatus.OK);
     }
 
-    @PostMapping("/otp")
-    public ResponseEntity<?> otp(
-            @RequestParam("Name") String name,
-            @RequestParam("OTP") String otp
-    ){
-        int viewer = 1; // save code of viewer is 1
-        String redisOtp = otpCache.getOtp(name + "otp");
-        if (otp.equals(redisOtp)) {
-            UserRequest userData = userCache.getUser(name, UserRequest.class);
-            ViewerResponse response = userService.saveUser(userData, viewer);
-            return new ResponseEntity<>(response.getUserName()+": SIGNUP SUCCESSFULLY!",HttpStatus.OK);
-        } else {
-            return new ResponseEntity<>("WRONG OTP",HttpStatus.FORBIDDEN);
+    @PostMapping("/varify-otp")
+    public ResponseEntity<Map<String, String>> varify(@RequestBody OtpRequest request) {
+        boolean response = authService.verifyOtp(request);
+        if (response) {
+            return ResponseEntity.ok(Map.of("Response", "SIGNUP SUCCESSFULLY"));
         }
+        return ResponseEntity.badRequest().body(Map.of("Error", "WRONG OR EXPIRED OTP"));
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<Map<String, String>> resendOtp(@RequestParam("username") String request) {
+        authService.resendOtp(request);
+        return ResponseEntity.ok(Map.of("Response", "RESEND SUCCESSFULLY"));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<?> login(
-            @RequestParam("userName") String username,
-            @RequestParam("password") String password
-    ) {
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
         try {
-            authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-            UserEntity user = userService.findUserByName(username);
-            if (user == null) {
-                return new ResponseEntity<>("Incorrect username or password", HttpStatus.UNAUTHORIZED);
-            }
-            String accessToken = jwtService.generateToken(user);
-            String refreshToken = jwtService.generateRefreshToken(user);
-            return ResponseEntity.ok(
-                    Map.of( "accessToken", accessToken,
-                            "refreshToken", refreshToken )
-            );
-        } catch (BadCredentialsException e) {
-            log.error("LOGIN ERROR :: BY {}", username);
-            return new ResponseEntity<>(
-                    Map.of("error", "Incorrect username or password"),
-                    HttpStatus.UNAUTHORIZED
-            );
+            Map<String, String> response = authService.authenticateAndGenerateToken(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("Error", "Invalid credentials."));
         }
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, String>> refresh(@RequestBody OtpRequest request) {
+        try{
+            return ResponseEntity.badRequest().body(Map.of("Error", "BAD REQUEST"));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("Error", "BAD REQUEST"));
+        }
+    }
 }

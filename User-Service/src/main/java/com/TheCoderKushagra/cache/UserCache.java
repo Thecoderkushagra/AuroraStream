@@ -1,8 +1,8 @@
 package com.TheCoderKushagra.cache;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.RedisConnectionFailureException;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
@@ -11,9 +11,10 @@ import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
+@RequiredArgsConstructor
 public class UserCache {
-    @Autowired
-    private RedisTemplate<String,String> redisTemplate;
+
+    private final RedisTemplate<String,String> redisTemplate;
 
     public boolean setUser(String key, Object value, long timeToLive){
         try{
