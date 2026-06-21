@@ -1,25 +1,52 @@
-HELP.md
-target/
-.mvn/wrapper/maven-wrapper.jar
-!**/src/main/**/target/
-!**/src/test/**/target/
+# =========================================================================
+# AuroraStream - Main Git Ignore Rules
+# =========================================================================
 
-### STS ###
+# --- Secrets and Environment Configs ---
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.env
+*.local
+
+# --- Project Documentation and Setup Noise ---
+HELP.md
+GEMINI.md
+
+# --- OS / System Files ---
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+# --- IDEs & Text Editors ---
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# STS / Eclipse
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
-.sts4-cache
+.sts4-cache/
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
+# NetBeans
 /nbproject/private/
 /nbbuild/
 /dist/
@@ -29,8 +56,29 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+# --- Java & Maven Build System ---
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+!**/src/main/**/target/
+!**/src/test/**/target/
 
-.env
-GEMINI.md
+# --- Frontend (Node / React / Vite) ---
+node_modules/
+dist/
+dist-ssr/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+.eslintcache
+.vite/
+.parcel-cache/

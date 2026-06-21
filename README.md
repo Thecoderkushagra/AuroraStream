@@ -16,6 +16,19 @@ AuroraStream follows a microservices architecture where each service handles a s
 - **Mail-Service**: Handles transactional emails such as OTP verification and notifications.
 - **frontend**: React + Vite client application that acts as the user interface for the streaming platform.
 
+## Frontend Dependencies
+
+| Package           | Version  |
+|-------------------|----------|
+| @tailwindcss/vite | ^4.1.18  |
+| axios             | 1.14.0   |
+| lucide-react      | ^0.545.0 |
+| react             | ^19.1.1  |
+| react-dom         | ^19.1.1  |
+| react-hot-toast   | ^2.6.0   |
+| react-router-dom  | ^7.9.3   |
+| tailwindcss       | ^4.1.18  |
+
 ## 🛠️ Tech Stack
 
 - **Backend**: Java 17+, Spring Boot, Spring Cloud (Gateway, Eureka)
