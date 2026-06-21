@@ -1,7 +1,11 @@
 import { useState, useEffect, useRef } from "react";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import authService from "../../services/authService";
 import Logo from "./Logo";
 
-export default function Otp({ email }) {
+export default function Otp({ email, username }) {
+    const navigate = useNavigate();
     const [otp, setOtp] = useState(new Array(6).fill(""));
     const [timer, setTimer] = useState(60);
     const [isVerifying, setIsVerifying] = useState(false);
@@ -34,14 +38,35 @@ export default function Otp({ email }) {
         }
     };
 
-    const handleVerify = (e) => {
+    const handleVerify = async (e) => {
         e.preventDefault();
         setIsVerifying(true);
-        setTimeout(() => setIsVerifying(false), 2000);
+        const otpCode = otp.join("");
+        try {
+            const data = await authService.verifyOtp({ username, otp: otpCode });
+            toast.success(data?.Response || "Verified successfully");
+            navigate("/login");
+        } catch (error) {
+            toast.error(error?.response?.data?.Error || "Verification failed");
+            setOtp(new Array(6).fill(""));
+            inputRefs.current[0]?.focus();
+        } finally {
+            setIsVerifying(false);
+        }
     };
 
-    const handleResend = () => {
-        if (timer === 0) setTimer(60);
+    const handleResend = async () => {
+        if (timer === 0) {
+            try {
+                const data = await authService.resendOtp(username);
+                toast.success(data?.Response || "OTP resent successfully");
+                setTimer(60);
+                setOtp(new Array(6).fill(""));
+                inputRefs.current[0]?.focus();
+            } catch (error) {
+                toast.error(error?.response?.data?.Error || "Failed to resend OTP");
+            }
+        }
     };
 
     return (

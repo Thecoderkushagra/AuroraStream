@@ -52,6 +52,12 @@
 * {
     font-family: 'Urbanist', sans-serif;
     box-sizing: border-box;
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+*::-webkit-scrollbar {
+    display: none;
 }
 
 body {
@@ -190,4 +196,14 @@ body {
 
 .aurora-pulse {
     animation: aurora-pulse 2s ease-in-out infinite;
+}
+
+/* Custom Scrollbar utilities */
+.scrollbar-hide::-webkit-scrollbar {
+    display: none;
+}
+
+.scrollbar-hide {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
 }

@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 
 const Settings = () => {
+  // Profile Settings
+  const [username, setUsername] = useState('aurora_user');
+
   // Playback Preferences
   const [autoplay, setAutoplay] = useState(true);
   const [quality, setQuality] = useState('Auto');
@@ -48,6 +51,31 @@ const Settings = () => {
     <div className="flex flex-col gap-8 w-full max-w-3xl mx-auto pb-12">
       <h1 className="text-3xl font-bold text-primary">Settings</h1>
       
+      {/* Account Settings */}
+      <div className="bg-surface rounded-xl p-6 border border-[var(--color-border)]">
+        <h2 className="text-xl font-semibold text-primary mb-6">Account Settings</h2>
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col md:flex-row md:items-start justify-between gap-4">
+            <div className="flex-1">
+              <p className="text-primary font-medium">Username</p>
+              <p className="text-sm text-muted mt-1">This is how you appear on AuroraStream.</p>
+              <p className="text-xs text-[color:var(--color-warning)] mt-2 italic">* You can only change your username once every 3 months.</p>
+            </div>
+            <div className="flex items-center gap-3">
+              <input 
+                type="text" 
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                className="bg-base border border-[var(--color-border)] rounded-lg px-4 py-2.5 text-primary outline-none focus:border-[var(--color-primary)] transition-colors w-full md:w-56"
+              />
+              <button className="btn-primary px-6 py-2.5 font-semibold">
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {/* Playback Preferences */}
       <div className="bg-surface rounded-xl p-6 border border-[var(--color-border)]">
         <h2 className="text-xl font-semibold text-primary mb-6">Playback Preferences</h2>

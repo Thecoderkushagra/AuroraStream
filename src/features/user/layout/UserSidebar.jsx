@@ -1,5 +1,11 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
+
+const SearchIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+  </svg>
+);
 
 const ChevronDown = () => (
   <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4">
@@ -31,9 +37,20 @@ const CreditCardIcon = () => (
   </svg>
 );
 
+const LogOutIcon = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
+    <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
+  </svg>
+);
+
 const UserSidebar = () => {
   const [isExploreExpanded, setIsExploreExpanded] = useState(true);
   const [isAccountExpanded, setIsAccountExpanded] = useState(true);
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    navigate('/login');
+  };
 
   const exploreLinks = [
     { path: '/user/home', label: 'Home' },
@@ -41,6 +58,7 @@ const UserSidebar = () => {
     { path: '/user/series', label: 'Series' },
     { path: '/user/my-list', label: 'My List' },
     { path: '/user/watch-history', label: 'Watch History' },
+    { path: '/user/following', label: 'Following' },
   ];
 
   const accountLinks = [
@@ -51,13 +69,29 @@ const UserSidebar = () => {
   ];
 
   return (
-    <aside className="w-64 bg-zinc-900 min-h-screen text-white p-4 flex flex-col gap-6">
+    <aside className="w-64 flex-shrink-0 bg-zinc-900 h-screen text-white p-4 flex flex-col gap-6 overflow-y-auto scrollbar-hide">
       <div className="flex items-center gap-3 px-2 py-4">
         <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center font-bold text-xl">A</div>
         <span className="text-xl font-bold tracking-wider">Aurora</span>
       </div>
 
       <nav className="flex flex-col gap-6">
+        <NavLink
+          to="/user/search"
+          className={({ isActive }) =>
+            `w-full flex items-center px-3 py-2 rounded-lg transition-colors duration-200 ${
+              isActive
+                ? 'bg-white text-black font-semibold'
+                : 'text-gray-300 hover:text-white hover:bg-zinc-800'
+            }`
+          }
+        >
+          <div className="flex items-center gap-3">
+            <SearchIcon />
+            <span className="font-semibold tracking-wide uppercase text-sm">Search</span>
+          </div>
+        </NavLink>
+
         <div>
           <button 
             onClick={() => setIsExploreExpanded(!isExploreExpanded)}
@@ -140,6 +174,18 @@ const UserSidebar = () => {
           </div>
         </NavLink>
       </nav>
+
+      <div className="mt-auto pt-6 border-t border-zinc-800">
+        <button 
+          onClick={handleSignOut}
+          className="w-full flex items-center px-3 py-2 text-gray-300 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-colors duration-200"
+        >
+          <div className="flex items-center gap-3">
+            <LogOutIcon />
+            <span className="font-semibold tracking-wide uppercase text-sm">Sign Out</span>
+          </div>
+        </button>
+      </div>
     </aside>
   );
 };

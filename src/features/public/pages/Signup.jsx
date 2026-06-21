@@ -1,8 +1,11 @@
 // features/public/pages/Signup.jsx
 import { Link } from "react-router-dom";
 import { useState } from "react";
+import toast from "react-hot-toast";
+import authService from "../../../services/authService";
 import Logo from "../../../components/common/Logo";
 import Otp from "../../../components/common/Otp";
+import { Loader2 } from "lucide-react";
 
 export default function Signup() {
     const [focused, setFocused] = useState(null);
@@ -12,16 +15,19 @@ export default function Signup() {
     // Form and OTP states
     const [showOtp, setShowOtp] = useState(false);
     const [userEmail, setUserEmail] = useState("");
+    const [userName, setUserName] = useState("");
     const [nameInput, setNameInput] = useState("");
     const [emailInput, setEmailInput] = useState("");
     const [passwordInput, setPasswordInput] = useState("");
+    const [isLoading, setIsLoading] = useState(false);
 
     const inputStyle = (name) => ({
         width: "100%",
         padding: "14px 16px",
-        fontSize: "14px",
+        fontSize: name === "password" ? "18px" : "14px",
         fontWeight: 500,
-        fontFamily: "'Urbanist', sans-serif",
+        fontFamily: name === "password" ? "sans-serif" : "'Urbanist', sans-serif",
+        letterSpacing: name === "password" ? "4px" : "normal",
         background: "var(--color-bg-base)",
         color: "var(--color-text-primary)",
         border: focused === name
@@ -35,16 +41,33 @@ export default function Signup() {
             : "none",
     });
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
         if (agreed && nameInput && emailInput && passwordInput) {
-            setUserEmail(emailInput);
-            setShowOtp(true);
+            setIsLoading(true);
+            try {
+                const userData = {
+                    username: nameInput,
+                    email: emailInput,
+                    password: passwordInput
+                };
+                
+                const data = await authService.signup(userData);
+                
+                toast.success(data?.Response || "OTP sent successfully");
+                setUserEmail(emailInput);
+                setUserName(nameInput);
+                setShowOtp(true);
+            } catch (error) {
+                toast.error(error?.response?.data?.Error || "Failed to sign up");
+            } finally {
+                setIsLoading(false);
+            }
         }
     };
 
     if (showOtp) {
-        return <Otp email={userEmail} />;
+        return <Otp email={userEmail} username={userName} />;
     }
 
     return (
@@ -187,7 +210,7 @@ export default function Signup() {
                 {/* Submit */}
                 <button
                     type="submit"
-                    disabled={!agreed}
+                    disabled={!agreed || isLoading}
                     onMouseEnter={() => setHovered(true)}
                     onMouseLeave={() => setHovered(false)}
                     style={{
@@ -197,27 +220,38 @@ export default function Signup() {
                         fontWeight: 700,
                         fontFamily: "'Urbanist', sans-serif",
                         color: "#fff",
-                        background: !agreed
+                        background: (!agreed || isLoading)
                             ? "rgba(0, 123, 255, 0.35)"
                             : hovered
                                 ? "var(--color-primary-hover)"
                                 : "var(--color-primary)",
                         border: "none",
                         borderRadius: "var(--radius-lg)",
-                        cursor: agreed ? "pointer" : "not-allowed",
+                        cursor: (agreed && !isLoading) ? "pointer" : "not-allowed",
                         transition: "background 0.2s ease, box-shadow 0.2s ease, transform 0.15s ease, opacity 0.2s ease",
-                        boxShadow: !agreed
+                        boxShadow: (!agreed || isLoading)
                             ? "none"
                             : hovered
                                 ? "0 0 24px rgba(0,123,255,0.4)"
                                 : "0 2px 12px rgba(0,123,255,0.2)",
-                        transform: agreed && hovered ? "translateY(-1px)" : "none",
+                        transform: (agreed && !isLoading && hovered) ? "translateY(-1px)" : "none",
                         marginTop: "4px",
                         letterSpacing: "0.02em",
-                        opacity: agreed ? 1 : 0.6,
+                        opacity: (agreed && !isLoading) ? 1 : 0.6,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        gap: "8px",
                     }}
                 >
-                    Create Account
+                    {isLoading ? (
+                        <>
+                            <Loader2 size={18} className="animate-spin" />
+                            Setting up your account...
+                        </>
+                    ) : (
+                        "Create Account"
+                    )}
                 </button>
             </form>
 
