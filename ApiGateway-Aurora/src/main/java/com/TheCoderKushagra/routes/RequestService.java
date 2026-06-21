@@ -1,7 +1,8 @@
 package com.TheCoderKushagra.routes;
 
 import com.TheCoderKushagra.jwt.JwtGatewayUtil;
-import org.springframework.beans.factory.annotation.Autowired;
+import jakarta.servlet.ServletException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -9,70 +10,91 @@ import org.springframework.web.servlet.function.ServerRequest;
 import org.springframework.web.servlet.function.ServerResponse;
 
 import java.io.IOException;
+import java.util.Set;
 
 @Service
+@RequiredArgsConstructor
 public class RequestService {
-    @Autowired
-    private RestTemplate restTemplate;
-    @Autowired
-    private JwtGatewayUtil jwtUtil;
+    private final RestTemplate restTemplate;
+    private final JwtGatewayUtil jwtUtil;
 
-    public ServerResponse forwardRequest(ServerRequest request, HttpMethod method, String serviceUrl, String path) {
+    private static final Set<HttpMethod> METHODS_WITH_BODY = Set.of(
+            HttpMethod.POST, HttpMethod.PUT, HttpMethod.PATCH, HttpMethod.DELETE
+    );
+
+    public ServerResponse forwardRequest(
+            ServerRequest request,
+            HttpMethod method,
+            String serviceUrl,
+            String path
+    ) {
         try {
-            // Read request body (empty for GET requests)
-            String requestBody = "";
-            if ( method == HttpMethod.POST || method == HttpMethod.PUT ||
-                    method == HttpMethod.PATCH || method == HttpMethod.DELETE ) {
-                requestBody = request.body(String.class);
-            }
+            // 1. Read the request body (only for methods that typically carry a body)
+            String requestBody = readRequestBodyIfPresent(request, method);
 
-            // Prepare headers
-            HttpHeaders newHeaders = new HttpHeaders();
-            newHeaders.setContentType(MediaType.APPLICATION_JSON);
+            // 2. Build headers for the outgoing request
+            HttpHeaders outgoingHeaders = buildOutgoingHeaders(request);
 
-            // Copy original headers
-            request.headers().asHttpHeaders().forEach((key, value) -> {
-                if (!key.equalsIgnoreCase("host") &&
-                        !key.equalsIgnoreCase("content-length")) {
-                    newHeaders.put(key, value);
-                }
-            });
+            // 3. Add JWT information as custom headers if an Authorization header exists
+            addJwtHeadersIfPresent(request, outgoingHeaders);
 
-            String authHeader = request.headers().firstHeader("Authorization");
-            if (authHeader != null && authHeader.startsWith("Bearer ")){
-                String jwt = authHeader.substring(7);
-                String userId = jwtUtil.extractUserId(jwt);
-                String username = jwtUtil.extractUsername(jwt);
-                String roles = jwtUtil.extractRoles(jwt);
-
-                // Add as custom headers
-                newHeaders.add("X-User-Id", userId);
-                newHeaders.add("X-Username", username);
-                newHeaders.add("X-User-Roles", roles);
-            }
-
-            HttpEntity<String> entity = new HttpEntity<>(requestBody, newHeaders);
-
-            // Make request to target service
+            // 4. Execute the request to the target service
             String targetUrl = serviceUrl + path;
-            ResponseEntity<String> response = restTemplate.exchange(
-                    targetUrl, method, entity, String.class
-            );
+            HttpEntity<String> entity = new HttpEntity<>(requestBody, outgoingHeaders);
+            ResponseEntity<String> response = restTemplate.exchange(targetUrl, method, entity, String.class);
 
-            // Return response
+            // 5. Return the target service's response
+            String responseBody = response.getBody() != null ? response.getBody() : "";
             return ServerResponse
                     .status(response.getStatusCode())
                     .contentType(MediaType.APPLICATION_JSON)
-                    .body(response.getBody() != null ? response.getBody() : "");
+                    .body(responseBody);
 
         } catch (IOException e) {
             return ServerResponse
                     .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Error reading request: " + e.getMessage());
+                    .body("Error reading request body: " + e.getMessage());
+
         } catch (Exception e) {
             return ServerResponse
                     .status(HttpStatus.SERVICE_UNAVAILABLE)
-                    .body("Error connecting to service: " + e.getMessage());
+                    .body("Error connecting to the target service: " + e.getMessage());
+        }
+    }
+
+    private String readRequestBodyIfPresent(
+            ServerRequest request, HttpMethod method
+    ) throws IOException, ServletException {
+        if (METHODS_WITH_BODY.contains(method)) {
+            return request.body(String.class);
+        }
+        return "";
+    }
+
+    private HttpHeaders buildOutgoingHeaders(ServerRequest request) {
+        HttpHeaders outgoingHeaders = new HttpHeaders();
+        outgoingHeaders.setContentType(MediaType.APPLICATION_JSON);
+
+        request.headers().asHttpHeaders().forEach((key, values) -> {
+            if (!key.equalsIgnoreCase("host") && !key.equalsIgnoreCase("content-length")) {
+                outgoingHeaders.put(key, values);
+            }
+        });
+
+        return outgoingHeaders;
+    }
+
+    private void addJwtHeadersIfPresent(ServerRequest request, HttpHeaders outgoingHeaders) {
+        String authHeader = request.headers().firstHeader("Authorization");
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            String jwt = authHeader.substring(7);
+            String userId = jwtUtil.extractUserId(jwt);
+            String username = jwtUtil.extractUsername(jwt);
+            String roles = jwtUtil.extractRoles(jwt);
+
+            outgoingHeaders.add("X-User-Id", userId);
+            outgoingHeaders.add("X-Username", username);
+            outgoingHeaders.add("X-User-Roles", roles);
         }
     }
 }

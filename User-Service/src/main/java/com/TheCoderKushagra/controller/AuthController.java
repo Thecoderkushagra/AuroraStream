@@ -1,15 +1,14 @@
 package com.TheCoderKushagra.controller;
 
+import com.TheCoderKushagra.dto.LoginRequest;
 import com.TheCoderKushagra.dto.OtpRequest;
 import com.TheCoderKushagra.dto.SignupRequest;
 import com.TheCoderKushagra.service.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
 
@@ -36,12 +35,32 @@ public class AuthController {
         if (response) {
             return ResponseEntity.ok(Map.of("Response", "SIGNUP SUCCESSFULLY"));
         }
-        return ResponseEntity.badRequest().body(Map.of("Error", "WRONG OTP"));
+        return ResponseEntity.badRequest().body(Map.of("Error", "WRONG OR EXPIRED OTP"));
+    }
+
+    @PostMapping("/resend-otp")
+    public ResponseEntity<Map<String, String>> resendOtp(@RequestParam("username") String request) {
+        authService.resendOtp(request);
+        return ResponseEntity.ok(Map.of("Response", "RESEND SUCCESSFULLY"));
     }
 
     @PostMapping("/login")
-    public String login() {
-        return "hello world";
+    public ResponseEntity<Map<String, String>> login(@RequestBody LoginRequest request) {
+        try {
+            Map<String, String> response = authService.authenticateAndGenerateToken(request);
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("Error", "Invalid credentials."));
+        }
     }
 
+    @PostMapping("/refresh")
+    public ResponseEntity<Map<String, String>> refresh(@RequestBody OtpRequest request) {
+        try{
+            return ResponseEntity.badRequest().body(Map.of("Error", "BAD REQUEST"));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("Error", "BAD REQUEST"));
+        }
+    }
 }

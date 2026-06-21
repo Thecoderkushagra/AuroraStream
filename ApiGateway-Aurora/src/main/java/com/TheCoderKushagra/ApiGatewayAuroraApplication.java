@@ -12,9 +12,8 @@ public class ApiGatewayAuroraApplication {
 		SpringApplication.run(ApiGatewayAuroraApplication.class, args);
 	}
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
-
+	@Bean
+	public RestTemplate restTemplate() {
+		return new RestTemplate();
+	}
 }

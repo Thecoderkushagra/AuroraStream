@@ -10,15 +10,15 @@ services:
     ports:
       - "5432:5432"
     volumes:
+      - postgres_data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   redis:
-    image: redis:latest
+    image: redis:8.8.0
     container_name: redis
     environment:
-      REDIS_USER: ${REDIS_USER}
-      REDIS_PASSWORD: ${REDIS_PASSWD}
-    command: redis-server --requirepass ${REDIS_PASSWD} --user ${REDIS_USER} on >${REDIS_PASSWD} ~* +@all
+      REDIS_PASSWORD: ${REDIS_PASSWD}   # only used for reference, not by Redis itself
+    command: redis-server --requirepass ${REDIS_PASSWD}
     ports:
       - "6379:6379"
     volumes:
@@ -52,4 +52,5 @@ services:
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
 
 volumes:
+  postgres_data:
   redis_data:

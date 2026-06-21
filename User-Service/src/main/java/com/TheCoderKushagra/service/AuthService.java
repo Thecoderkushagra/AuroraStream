@@ -2,28 +2,33 @@ package com.TheCoderKushagra.service;
 
 import com.TheCoderKushagra.cache.OtpCache;
 import com.TheCoderKushagra.cache.UserCache;
-import com.TheCoderKushagra.client.MailClient;
+import com.TheCoderKushagra.dto.LoginRequest;
 import com.TheCoderKushagra.dto.OtpRequest;
 import com.TheCoderKushagra.dto.SignupRequest;
-import com.TheCoderKushagra.entity.Viewer;
+import com.TheCoderKushagra.entity.User;
 import com.TheCoderKushagra.repository.UserRepository;
+import com.TheCoderKushagra.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.scheduling.annotation.Async;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
+import java.util.Map;
 import java.util.UUID;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final MailClient mailClient;
     private final UserRepository userRepository;
     private final OtpCache otpCache;
     private final UserCache userCache;
     private final ViewerService viewerService;
-
+    private final AuthenticationManager authenticationManager;
+    private final JwtService jwtService;
+    private final EmailService emailService;
 
     public String signupUser(SignupRequest request) {
         if (userRepository.existsByUsername(request.username())) {
@@ -42,15 +47,8 @@ public class AuthService {
             log.warn("Failed to cache data for user: {}. UserCached: {}, OtpCached: {}", request.username(), uc, oc);
             throw new RuntimeException("Failed to cache data");
         }
-        sendOtp(request.email(), otp);
+        emailService.sendOtp(request.email(), otp);
         return "OTP SEND SUCCESSFULLY";
-    }
-
-    @Async
-    public void sendOtp(String to, String otp) {
-        mailClient.sendSimpleMail(to, "OTP for Signup",
-                "Your OTP for SignUp verification is: " + otp +
-                        ". It is valid for only 5 minutes. \n\nDo not share this OTP with anyone.");
     }
 
     public String generateSixDigitNumber() {
@@ -69,4 +67,33 @@ public class AuthService {
         }
         return false;
     }
+
+    public void resendOtp(String username) {
+        String redisOtp = otpCache.getOtp(username + "otp");
+        SignupRequest user = userCache.getUser(username, SignupRequest.class);
+        emailService.sendOtp(user.email(), redisOtp);
+    }
+
+    public Map<String, String> authenticateAndGenerateToken(LoginRequest request) {
+        try {
+            Authentication authenticate = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(request.username(), request.password()));
+            User user = (User) authenticate.getPrincipal();
+            String tokenJwt = jwtService.generateJwtToken(user);
+            String tokenRefresh = jwtService.generateRefreshToken(user);
+
+            return Map.of("jwt", tokenJwt, "refresh", tokenRefresh);
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            log.warn("Authentication failed for user: {}. Reason: {}", request.username(), e.getMessage());
+            throw new RuntimeException("Invalid username or password");
+        } catch (Exception e) {
+            log.error("Unexpected error during authentication for user: {}", request.username(), e);
+            throw new RuntimeException("Authentication error: " + e.getMessage());
+        }
+    }
+
+    public void refreshAuthToken(String token) {
+
+    }
+
 }
