@@ -24,6 +24,7 @@ import Moderation from "./features/admin/pages/content/Moderation";
 import ReportsQueue from "./features/admin/pages/reports/ReportsQueue";
 import Transactions from "./features/admin/pages/payments/Transactions";
 import ManageAdmins from "./features/admin/pages/manage/ManageAdmins";
+import AdminProfile from "./features/admin/pages/profile/AdminProfile";
 
 // public pages
 import Landing from "./features/public/pages/Landing";
@@ -108,6 +109,7 @@ export default function App() {
                     <Route path="content" element={<Moderation />} />
                     <Route path="reports" element={<ReportsQueue />} />
                     <Route path="payments" element={<Transactions />} />
+                    <Route path="profile" element={<AdminProfile />} />
                     <Route 
                         path="manage/admins" 
                         element={

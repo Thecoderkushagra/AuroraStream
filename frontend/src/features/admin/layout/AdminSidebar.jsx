@@ -7,7 +7,8 @@ import {
     Flag,
     CreditCard,
     Shield,
-    LogOut
+    LogOut,
+    User
 } from "lucide-react";
 
 export const currentAdmin = {
@@ -19,7 +20,8 @@ const navItems = [
     {
         section: "Dashboard",
         links: [
-            { path: "/admin", label: "Overview", icon: LayoutDashboard, end: true }
+            { path: "/admin", label: "Overview", icon: LayoutDashboard, end: true },
+            { path: "/admin/profile", label: "Profile", icon: User }
         ]
     },
     {

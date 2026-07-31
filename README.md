@@ -4,14 +4,14 @@ AuroraStream is a robust, scalable microservices-based video streaming platform 
 
 ## 🏗️ Architecture Overview
 
-AuroraStream follows a microservices architecture where each service handles a specific domain. The services communicate asynchronously via **Kafka** for long-running tasks like transcoding and use **Eureka** for service discovery.
+AuroraStream follows a microservices architecture where each service handles a specific domain. The services communicate asynchronously via **Amazon SQS & SNS** for long-running tasks like transcoding and use **Eureka** for service discovery.
 
 ### 🛰️ Microservices
 - **ApiGateway-Aurora**: The entry point for all client requests. It handles routing and JWT-based authentication.
 - **Service-Registry**: Eureka server for service discovery and load balancing.
 - **User-Service**: Manages user profiles, roles (Admin, Publisher, Viewer, Master Admin), and authentication (JWT, OTP).
-- **Metadata-Service**: Manages video metadata (Movies, Series, Episodes, Genres). It triggers transcoding tasks by publishing to Kafka.
-- **Transcode-Service**: Consumes transcoding tasks from Kafka and uses **FFmpeg** to convert raw videos into multi-resolution HLS streams (360p, 480p, 720p, 1080p).
+- **Metadata-Service**: Manages video metadata (Movies, Series, Episodes, Genres). It triggers transcoding tasks by publishing messages to Amazon SQS.
+- **Transcode-Service**: Consumes transcoding tasks from Amazon SQS (`video-transcode-jobs`) and uses **FFmpeg** to convert raw videos into multi-resolution HLS streams (360p, 480p, 720p, 1080p).
 - **Streaming-Service**: Serves the HLS playlist files (`.m3u8`) and video segments (`.ts`) to the client.
 - **Mail-Service**: Handles transactional emails such as OTP verification and notifications.
 - **frontend**: React + Vite client application that acts as the user interface for the streaming platform.
@@ -36,7 +36,7 @@ AuroraStream follows a microservices architecture where each service handles a s
 - **Databases**:
   - **PostgreSQL**: Shared database (`streaming_db`) with isolated schemas (`user_schema`, `metadata_schema`).
   - **Redis**: Caching OTPs and user sessions for high performance.
-- **Messaging**: Apache Kafka (with Zookeeper)
+- **Messaging**: Amazon SQS & Amazon SNS (LocalStack for local development)
 - **Video Processing**: FFmpeg (HLS Transcoding)
 - **Security**: Spring Security, JWT
 - **Containerization**: Docker, Docker Compose
@@ -51,7 +51,7 @@ AuroraStream follows a microservices architecture where each service handles a s
 - **FFmpeg** installed on the host machine (for Transcode-Service)
 
 ### 1. Infrastructure Setup
-Run the following command to start Kafka and Zookeeper:
+Run the following command to start LocalStack, PostgreSQL, and Redis:
 ```bash
 docker-compose -f docker-compose.yml up -d
 ```
@@ -99,9 +99,9 @@ The frontend user interface is located in the [frontend](file:///home/kushagra/D
 
 ## 🎞️ Video Processing Workflow
 1. **Publisher** uploads a video through the `Metadata-Service`.
-2. `Metadata-Service` saves the metadata and sends a message to the `transcode` Kafka topic.
-3. `Transcode-Service` receives the message and invokes **FFmpeg** to generate HLS segments.
-4. Once transcoding is complete, the `Streaming-Service` can serve the video via `.m3u8` playlists.
+2. `Metadata-Service` saves the metadata and pushes a job message to the `video-transcode-jobs` SQS queue.
+3. `Transcode-Service` receives the message via `@SqsListener` and invokes **FFmpeg** to generate HLS segments.
+4. Once transcoding is complete, `Transcode-Service` publishes a completion event to the `video-events` SNS topic.
 
 ## 🛡️ Security
 The project uses JWT for secure communication.

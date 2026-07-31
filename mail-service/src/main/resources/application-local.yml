@@ -1,0 +1,22 @@
+spring:
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:test}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:test}
+      region:
+        static: ${AWS_REGION:ap-south-1}
+      endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      sqs:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      sns:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+
+aws:
+  access-key: ${AWS_ACCESS_KEY_ID:test}
+  secret-key: ${AWS_SECRET_ACCESS_KEY:test}
+  region: ${AWS_REGION:ap-south-1}
+  endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+  sns:
+    topic:
+      user-events: ${AWS_SNS_USER_EVENTS_TOPIC:user-events}

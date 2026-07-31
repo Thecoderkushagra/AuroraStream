@@ -1,0 +1,27 @@
+spring:
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:test}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:test}
+      region:
+        static: ${AWS_REGION:ap-south-1}
+      endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      s3:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+        path-style-access-enabled: true
+      sqs:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+
+aws:
+  access-key: ${AWS_ACCESS_KEY_ID:test}
+  secret-key: ${AWS_SECRET_ACCESS_KEY:test}
+  region: ${AWS_REGION:ap-south-1}
+  endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+  s3:
+    bucket:
+      raw: ${AWS_S3_RAW_BUCKET:aurora-raw-video}
+      processed: ${AWS_S3_PROCESSED_BUCKET:aurora-processed-video}
+  sqs:
+    queue:
+      transcode: ${AWS_SQS_TRANSCODE_QUEUE:video-transcode-jobs}

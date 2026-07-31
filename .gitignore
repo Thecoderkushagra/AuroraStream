@@ -10,10 +10,10 @@
 .env.production.local
 *.env
 *.local
+.localstack_volume/
 
 # --- Project Documentation and Setup Noise ---
 HELP.md
-GEMINI.md
 
 # --- OS / System Files ---
 .DS_Store
@@ -82,3 +82,8 @@ lerna-debug.log*
 .eslintcache
 .vite/
 .parcel-cache/
+
+# --- AI Agent ---
+# Antigravity CLI Context
+.antigravity.md
+.agents/

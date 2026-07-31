@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useUser } from '../../../../context/UserContext';
+import toast from 'react-hot-toast';
 
 const Settings = () => {
+  const { viewer, loading, error, setViewer } = useUser();
+
   // Profile Settings
-  const [username, setUsername] = useState('aurora_user');
+  const [username, setUsername] = useState('');
 
   // Playback Preferences
   const [autoplay, setAutoplay] = useState(true);
@@ -19,6 +23,61 @@ const Settings = () => {
 
   // Privacy
   const [personalizedRecs, setPersonalizedRecs] = useState(true);
+
+  useEffect(() => {
+    if (viewer) {
+      setUsername(viewer.username || '');
+      setAutoplay(viewer.autoPlayNext ?? true);
+      setQuality(viewer.defaultVidQuality || 'Auto');
+      setEmailNotifs(viewer.notification ?? true);
+      setRenewalReminders(viewer.subscriptionRenewalReminders ?? true);
+      setPersonalizedRecs(viewer.recommendation ?? true);
+    }
+  }, [viewer]);
+
+  const handleUpdateUsername = () => {
+    if (!username.trim()) {
+      toast.error('Username cannot be empty');
+      return;
+    }
+    // Update local context state
+    setViewer(prev => prev ? { ...prev, username } : null);
+    toast.success('Username updated (locally)');
+  };
+
+  const handleToggleAutoplay = () => {
+    const nextVal = !autoplay;
+    setAutoplay(nextVal);
+    setViewer(prev => prev ? { ...prev, autoPlayNext: nextVal } : null);
+    toast.success(`Autoplay next episode ${nextVal ? 'enabled' : 'disabled'} (locally)`);
+  };
+
+  const handleQualityChange = (val) => {
+    setQuality(val);
+    setViewer(prev => prev ? { ...prev, defaultVidQuality: val } : null);
+    toast.success(`Default video quality set to ${val} (locally)`);
+  };
+
+  const handleToggleEmailNotifs = () => {
+    const nextVal = !emailNotifs;
+    setEmailNotifs(nextVal);
+    setViewer(prev => prev ? { ...prev, notification: nextVal } : null);
+    toast.success(`Email notifications ${nextVal ? 'enabled' : 'disabled'} (locally)`);
+  };
+
+  const handleToggleRenewalReminders = () => {
+    const nextVal = !renewalReminders;
+    setRenewalReminders(nextVal);
+    setViewer(prev => prev ? { ...prev, subscriptionRenewalReminders: nextVal } : null);
+    toast.success(`Renewal reminders ${nextVal ? 'enabled' : 'disabled'} (locally)`);
+  };
+
+  const handleTogglePersonalizedRecs = () => {
+    const nextVal = !personalizedRecs;
+    setPersonalizedRecs(nextVal);
+    setViewer(prev => prev ? { ...prev, recommendation: nextVal } : null);
+    toast.success(`Personalized recommendations ${nextVal ? 'enabled' : 'disabled'} (locally)`);
+  };
 
   const Toggle = ({ enabled, onChange }) => (
     <button 
@@ -47,6 +106,32 @@ const Settings = () => {
     </div>
   );
 
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-[400px] w-full">
+        <div className="text-xl text-muted animate-pulse">Loading Settings...</div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] w-full max-w-xl mx-auto text-center gap-4">
+        <h2 className="text-2xl font-bold text-[color:var(--color-error)]">Failed to Load Settings</h2>
+        <p className="text-muted">{error.message || 'An error occurred. Please try again later.'}</p>
+      </div>
+    );
+  }
+
+  if (!viewer) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[400px] w-full max-w-xl mx-auto text-center gap-4">
+        <h2 className="text-2xl font-bold text-primary">No Active Session</h2>
+        <p className="text-muted">Please log in to access settings.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-8 w-full max-w-3xl mx-auto pb-12">
       <h1 className="text-3xl font-bold text-primary">Settings</h1>
@@ -68,7 +153,10 @@ const Settings = () => {
                 onChange={(e) => setUsername(e.target.value)}
                 className="bg-base border border-[var(--color-border)] rounded-lg px-4 py-2.5 text-primary outline-none focus:border-[var(--color-primary)] transition-colors w-full md:w-56"
               />
-              <button className="btn-primary px-6 py-2.5 font-semibold">
+              <button 
+                onClick={handleUpdateUsername}
+                className="btn-primary px-6 py-2.5 font-semibold"
+              >
                 Update
               </button>
             </div>
@@ -85,7 +173,7 @@ const Settings = () => {
               <p className="text-primary font-medium">Autoplay Next Episode</p>
               <p className="text-sm text-muted mt-1">Automatically play the next episode in a series.</p>
             </div>
-            <Toggle enabled={autoplay} onChange={() => setAutoplay(!autoplay)} />
+            <Toggle enabled={autoplay} onChange={handleToggleAutoplay} />
           </div>
 
           <div className="flex items-center justify-between">
@@ -95,7 +183,7 @@ const Settings = () => {
             </div>
             <Select 
               value={quality} 
-              onChange={(e) => setQuality(e.target.value)} 
+              onChange={(e) => handleQualityChange(e.target.value)} 
               options={['Auto', '4K', '1080p', '720p', '480p']} 
             />
           </div>
@@ -119,7 +207,7 @@ const Settings = () => {
               <p className="text-primary font-medium">Email Notifications</p>
               <p className="text-sm text-muted mt-1">Receive updates about new releases and recommendations.</p>
             </div>
-            <Toggle enabled={emailNotifs} onChange={() => setEmailNotifs(!emailNotifs)} />
+            <Toggle enabled={emailNotifs} onChange={handleToggleEmailNotifs} />
           </div>
 
           <div className="flex items-center justify-between">
@@ -127,7 +215,7 @@ const Settings = () => {
               <p className="text-primary font-medium">Subscription Renewal Reminders</p>
               <p className="text-sm text-muted mt-1">Get notified before your subscription is renewed.</p>
             </div>
-            <Toggle enabled={renewalReminders} onChange={() => setRenewalReminders(!renewalReminders)} />
+            <Toggle enabled={renewalReminders} onChange={handleToggleRenewalReminders} />
           </div>
         </div>
       </div>
@@ -184,7 +272,7 @@ const Settings = () => {
               <p className="text-primary font-medium">Personalized Recommendations</p>
               <p className="text-sm text-muted mt-1">Allow us to use your viewing history to suggest content.</p>
             </div>
-            <Toggle enabled={personalizedRecs} onChange={() => setPersonalizedRecs(!personalizedRecs)} />
+            <Toggle enabled={personalizedRecs} onChange={handleTogglePersonalizedRecs} />
           </div>
 
           <div className="flex items-center justify-between">
@@ -192,7 +280,10 @@ const Settings = () => {
               <p className="text-primary font-medium">Clear Watch History</p>
               <p className="text-sm text-muted mt-1">Remove all previously watched content from your account.</p>
             </div>
-            <button className="px-4 py-2 bg-[var(--color-error-bg)] text-[color:var(--color-error)] font-medium rounded-lg hover:bg-[var(--color-error-bg)] transition-colors border border-[var(--color-error)]">
+            <button 
+              onClick={() => toast.success('Watch history cleared (locally)')}
+              className="px-4 py-2 bg-[var(--color-error-bg)] text-[color:var(--color-error)] font-medium rounded-lg hover:bg-[var(--color-error-bg)] transition-colors border border-[var(--color-error)]"
+            >
               Clear History
             </button>
           </div>

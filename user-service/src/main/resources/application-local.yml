@@ -1,0 +1,35 @@
+spring:
+  datasource:
+    url: ${USER_DB_URL:jdbc:postgresql://localhost:5432/user_db?currentSchema=user_schema}
+    username: ${DB_USERNAME:aurora_local}
+    password: ${DB_PASSWORD:aurora_pass}
+    driver-class-name: org.postgresql.Driver
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+  cloud:
+    aws:
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:test}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:test}
+      region:
+        static: ${AWS_REGION:ap-south-1}
+      endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      s3:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+        path-style-access-enabled: true
+      sqs:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+      sns:
+        endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+
+aws:
+  access-key: ${AWS_ACCESS_KEY_ID:test}
+  secret-key: ${AWS_SECRET_ACCESS_KEY:test}
+  region: ${AWS_REGION:ap-south-1}
+  endpoint: ${AWS_ENDPOINT_URL:http://localhost:4566}
+  sns:
+    topic:
+      user-events: ${AWS_SNS_USER_EVENTS_TOPIC:user-events}

@@ -1,0 +1,29 @@
+{
+  "info": {
+    "name": "Aurora Stream API Collection",
+    "description": "API Contracts for the Aurora Stream microservices.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "description": "Authentication and authorization endpoints",
+      "item": []
+    },
+    {
+      "name": "Users",
+      "description": "User management endpoints",
+      "item": []
+    },
+    {
+      "name": "Metadata",
+      "description": "Video and stream metadata endpoints",
+      "item": []
+    },
+    {
+      "name": "Videos",
+      "description": "Video uploading and processing endpoints",
+      "item": []
+    }
+  ]
+}
