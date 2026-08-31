@@ -1,4 +1,4 @@
-## This project is Archived and no longer maintained. There is a successor of this project that i have been working on and it name is [AuroraStream.v2](https://github.com/Thecoderkushagra/AuroraStream.v2)
+## This project is Archived and no longer maintained. There is a successor of this project that i have been working on and it's name is [AuroraStream.v2](https://github.com/Thecoderkushagra/AuroraStream.v2)
 
 # AuroraStream 🚀
 
