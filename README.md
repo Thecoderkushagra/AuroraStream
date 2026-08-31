@@ -1,3 +1,5 @@
+## This project is Archived and no longer maintained. There is a successor of this project that i have been working on and it name is [AuroraStream.v2](https://github.com/Thecoderkushagra/AuroraStream.v2)
+
 # AuroraStream 🚀
 
 AuroraStream is a robust, scalable microservices-based video streaming platform designed to handle high-quality video content delivery using HLS (HTTP Live Streaming). The system is built with Spring Boot, leveraging a distributed architecture for authentication, metadata management, transcoding, and streaming.
